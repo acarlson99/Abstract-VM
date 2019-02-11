@@ -22,35 +22,35 @@ IOperand const *Factory::createOperand(eOperandType type, std::string const &val
 {
 	static_cast<void>(type);
 	static_cast<void>(value);
-	return (nullptr);
+	return (NULL);
 }
 
 IOperand const *Factory::createInt8(std::string const &value) const
 {
 	static_cast<void>(value);
-	return (nullptr);
+	return (NULL);
 }
 
 IOperand const *Factory::createInt16(std::string const &value) const
 {
 	static_cast<void>(value);
-	return (nullptr);
+	return (NULL);
 }
 
 IOperand const *Factory::createInt32(std::string const &value) const
 {
 	static_cast<void>(value);
-	return (nullptr);
+	return (NULL);
 }
 
 IOperand const *Factory::createFloat(std::string const &value) const
 {
 	static_cast<void>(value);
-	return (nullptr);
+	return (NULL);
 }
 
 IOperand const *Factory::createDouble(std::string const &value) const
 {
 	static_cast<void>(value);
-	return (nullptr);
+	return (NULL);
 }
