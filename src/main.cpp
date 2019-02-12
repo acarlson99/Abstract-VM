@@ -4,8 +4,6 @@
 
 int main()
 {
-	Operand<int>	a = 32;
-
 	std::cout << "Hello, world!" << std::endl;
-	std::cout << a.getValue() << std::endl;
+	std::cout << std::to_string(9) << std::endl;
 }
