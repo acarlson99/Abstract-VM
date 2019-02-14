@@ -1,8 +1,7 @@
 #ifndef OPERAND_HPP
 # define OPERAND_HPP
 
-# include <iostream>
-# include <string>
+# include "IOperand.hpp"
 
 template <typename T>
 class Operand: public IOperand {

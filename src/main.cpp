@@ -26,7 +26,4 @@ int main(int argc, char **argv)
 	}
 	while (std::getline(FILEIN, str))
 		std::cout << str << std::endl;
-
-	std::cout << "Hello, world!" << std::endl;
-	std::cout << std::to_string(9) << std::endl;
 }

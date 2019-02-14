@@ -59,3 +59,7 @@ fi) "
 
 j:
 	$(CC) $(DFLAGS) $(INCLUDES) $(addprefix $(SRC), $(CPPFILES)) -o $(DNAME)
+
+k: fclean
+	rm -f $(DNAME)
+	rm -rf *.dSYM

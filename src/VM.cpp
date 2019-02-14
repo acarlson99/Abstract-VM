@@ -1,24 +1,17 @@
 #include "VM.hpp"
 
-VM::VM( std::string s )
-{
-    this->_read_from_file = 1;
-    this->_filename = s;
-}
+VM::VM(std::string s) : _read_from_file(1), _filename(s) { }
+VM::VM(void) : _read_from_file(0) { }
+VM::VM(VM const &cp) { *this = cp; }
+VM::~VM(void) { }
 
-VM::VM( void ) : _read_from_file(0) { }
-VM::VM( VM const &cp ) { *this = cp; }
-VM::~VM( void ) // TODO: free everything
+VM &VM::operator=(VM const &rhs)
 {
-    while (!this->_nums.empty())
+    if (this != &rhs)
     {
-        delete this->_nums.top();
-        this->_nums.pop();
+        this->_nums = rhs._nums;
+        this->_read_from_file = rhs._read_from_file;
+        this->_filename = rhs._filename;
     }
-}
-
-VM &VM::operator=( VM const &rhs )  // TODO: copy EVERYTHING
-{
-    this->_nums = rhs._nums;
     return *this;
 }
