@@ -3,10 +3,10 @@
 Factory::Factory(void)
 {
 	_f[Int8] = &Factory::createInt8;
-	_f[Int16] = &Factory::createInt8;
-	_f[Int32] = &Factory::createInt8;
-	_f[Float] = &Factory::createInt8;
-	_f[Double] = &Factory::createInt8;
+	_f[Int16] = &Factory::createInt16;
+	_f[Int32] = &Factory::createInt32;
+	_f[Float] = &Factory::createFloat;
+	_f[Double] = &Factory::createDouble;
 }
 
 Factory::Factory(Factory const &cp) { *this = cp; }

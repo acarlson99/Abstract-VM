@@ -1,90 +1,119 @@
 #ifndef OPERAND_HPP
-# define OPERAND_HPP
+#define OPERAND_HPP
 
-# include "IOperand.hpp"
+#include "IOperand.hpp"
 
 template <typename T>
-class Operand: public IOperand {
-
+class Operand : public IOperand {
 public:
-	Operand( T value, eOperandType type )
-		: _value(value), _type(type), _string(new std::string(std::to_string(this->_value)))
-		{
-		}
+	class OverflowException : public std::exception {
+	  public:
+		OverflowException(void) {}
+		OverflowException(OverflowException const &cp) { *this = cp; }
+		~OverflowException(void) throw() {}
+		OverflowException &operator=(OverflowException const &) { return *this; }
+		virtual const char *what() const throw() { return ("Value overflow"); }
+	};
 
-	Operand( T value )
-		{
-			this->_value = value;
-		}
+	class UnderflowException : public std::exception {
+	  public:
+		UnderflowException(void) {}
+		UnderflowException(UnderflowException const &cp) { *this = cp; }
+		~UnderflowException(void) throw() {}
+		UnderflowException &operator=(UnderflowException const &) { return *this; }
+		virtual const char *what() const throw() { return ("Value underflow"); }
+	};
 
-	Operand( void )
-		{
-			this->_value = 0;
-		}
+	class PopOnEmptyStackException : public std::exception {
+	  public:
+		PopOnEmptyStackException(void) {}
+		PopOnEmptyStackException(PopOnEmptyStackException const &cp) { *this = cp; }
+		~PopOnEmptyStackException(void) throw() {}
+		PopOnEmptyStackException &operator=(PopOnEmptyStackException const &) { return *this; }
+		virtual const char *what() const throw() { return ("Pop on empty stack"); }
+	};
 
-	Operand( Operand const & cp) { *this = cp; }
+	class DivisionByZeroException : public std::exception {
+	  public:
+		DivisionByZeroException(void) {}
+		DivisionByZeroException(DivisionByZeroException const &cp) { *this = cp; }
+		~DivisionByZeroException(void) throw() {}
+		DivisionByZeroException &operator=(DivisionByZeroException const &) { return *this; }
+		virtual const char *what() const throw() { return ("Division by zero"); }
+	};
 
-	~Operand( void )
-		{
-		}
+	Operand(T value, eOperandType type)
+		: _value(value), _type(type), _string(new std::string(std::to_string(this->_value))) {}
 
-	Operand& operator=( Operand const &rhs)
-		{
-			this->_value = rhs._value;
-			return *this;
-		}
+	Operand(void) : _value(0), _type(Int8), _string(new std::string(std::string(std::to_string(this->_value)))) {}
 
-	T		getValue( void ) { return (_value); }
+	Operand(Operand const &cp) { *this = cp; }
 
-	virtual int						getPrecision(void) const
-		{
-			return (sizeof(_value));
-		}
-	
-	virtual eOperandType			getType(void) const
-		{
-			return (this->_type);
-		}
+	~Operand(void)
+	{
+		delete this->_string;
+	}
 
-	virtual IOperand const *		operator+( IOperand const& rhs ) const {
+	Operand &operator=(Operand const &rhs)
+	{
+		this->_value = rhs._value;
+		this->_type = rhs._type;
+		delete this->_string;
+		this->_string = new std::string(rhs._string->c_str());
+		return *this;
+	}
+
+	T							getValue(void) { return (_value); }
+
+	virtual int					getPrecision(void) const
+	{
+		return (sizeof(_value));
+	}
+
+	virtual eOperandType		getType(void) const
+	{
+		return (this->_type);
+	}
+
+	virtual IOperand const *operator+(IOperand const &rhs) const
+	{
 		static_cast<void>(rhs);
-		return (NULL); }
-	// { return (new Operand(this->_value + rhs._value)); }	// TODO: how tf do I do this without adding stuff to IOperand?
+		return (NULL);
+	}
 
-	virtual IOperand const *		operator-( IOperand const& rhs ) const
-		{
-			static_cast<void>(rhs);
-			return (NULL);
-		}
+	virtual IOperand const *operator-(IOperand const &rhs) const
+	{
+		static_cast<void>(rhs);
+		return (NULL);
+	}
 
-	virtual IOperand const *		operator*( IOperand const& rhs ) const
-		{
-			static_cast<void>(rhs);
-			return (NULL);
-		}
+	virtual IOperand const *operator*(IOperand const &rhs) const
+	{
+		static_cast<void>(rhs);
+		return (NULL);
+	}
 
-	virtual IOperand const *		operator/( IOperand const& rhs ) const
-		{
-			static_cast<void>(rhs);
-			return (NULL);
-		}
+	virtual IOperand const *operator/(IOperand const &rhs) const
+	{
+		static_cast<void>(rhs);
+		return (NULL);
+	}
 
-	virtual IOperand const *		operator%( IOperand const& rhs ) const
-		{
-			static_cast<void>(rhs);
-			return (NULL);
-		}
+	virtual IOperand const *operator%(IOperand const &rhs) const
+	{
+		static_cast<void>(rhs);
+		return (NULL);
+	}
 
-	virtual std::string const &		toString(void) const
-		{
-			return (*this->_string);
-		}
+	virtual std::string const		&toString(void) const
+	{
+		return (*this->_string);
+	}
 
 private:
-	T					_value;
-	eOperandType		_type;
-	std::string*		_string;
-
+	T _value;
+	eOperandType _type;
+	std::string *_string;
 };
 
 #endif

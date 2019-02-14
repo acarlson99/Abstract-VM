@@ -1,9 +1,9 @@
 #ifndef VM_HPP
 # define VM_HPP
 
-# include <stack>
-# include <queue>
-# include "IOperand.hpp"
+# include <vector>
+# include <fstream>
+# include "Factory.hpp"
 
 /*
 ** COMMANDS
@@ -29,6 +29,21 @@
 ** ;; - EOF for stdin
 */
 
+enum eCommand {
+	Push,
+	Pop,
+	Dump,
+	Assert,
+	Add,
+	Sub,
+	Mul,
+	Div,
+	Mod,
+	Print,
+	Exit,
+	Eof
+};
+
 class VM {
 
 public:
@@ -39,12 +54,24 @@ public:
 	VM& operator=( VM const &);
 
 	void		readLoop( void );
-	void		addCommand( std::string& );
+	eCommand	lexIn( std::string& );
+	void		parseIn( eCommand, std::string& );
+
+	class InvalidFileException : public std::exception {
+	  public:
+		InvalidFileException(void);
+		InvalidFileException(InvalidFileException const &cp);
+		~InvalidFileException(void) throw();
+		InvalidFileException &operator=(InvalidFileException const &);
+		virtual const char *what() const throw();
+	};
 
 private:
-	std::stack<IOperand *>			_nums;
-	bool							_read_from_file;
+	std::vector<IOperand *>			_nums;
+	bool							_readFromFile;
+	bool							_continueReading;
 	std::string						_filename;
+	Factory							f;
 
 };
 
