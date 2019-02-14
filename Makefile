@@ -1,7 +1,7 @@
 CC = clang++
 SRC = src/
 CPPFLAGS = -Wall -Wextra -Werror -pedantic -std=c++14
-DFLAGS = -Wall -Wextra -g
+DFLAGS = -Wall -Wextra -pedantic -std=c++14 -g
 OBJDIR = .obj/
 INCLUDES = -I includes/
 FILES = main VM Factory
