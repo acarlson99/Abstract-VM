@@ -6,42 +6,6 @@
 template <typename T>
 class Operand : public IOperand {
 public:
-	class OverflowException : public std::exception {
-	  public:
-		OverflowException(void) {}
-		OverflowException(OverflowException const &cp) { *this = cp; }
-		~OverflowException(void) throw() {}
-		OverflowException &operator=(OverflowException const &) { return *this; }
-		virtual const char *what() const throw() { return ("Value overflow"); }
-	};
-
-	class UnderflowException : public std::exception {
-	  public:
-		UnderflowException(void) {}
-		UnderflowException(UnderflowException const &cp) { *this = cp; }
-		~UnderflowException(void) throw() {}
-		UnderflowException &operator=(UnderflowException const &) { return *this; }
-		virtual const char *what() const throw() { return ("Value underflow"); }
-	};
-
-	class PopOnEmptyStackException : public std::exception {
-	  public:
-		PopOnEmptyStackException(void) {}
-		PopOnEmptyStackException(PopOnEmptyStackException const &cp) { *this = cp; }
-		~PopOnEmptyStackException(void) throw() {}
-		PopOnEmptyStackException &operator=(PopOnEmptyStackException const &) { return *this; }
-		virtual const char *what() const throw() { return ("Pop on empty stack"); }
-	};
-
-	class DivisionByZeroException : public std::exception {
-	  public:
-		DivisionByZeroException(void) {}
-		DivisionByZeroException(DivisionByZeroException const &cp) { *this = cp; }
-		~DivisionByZeroException(void) throw() {}
-		DivisionByZeroException &operator=(DivisionByZeroException const &) { return *this; }
-		virtual const char *what() const throw() { return ("Division by zero"); }
-	};
-
 	Operand(T value, eOperandType type)
 		: _value(value), _type(type), _string(new std::string(std::to_string(this->_value))) {}
 
@@ -109,6 +73,33 @@ public:
 	{
 		return (*this->_string);
 	}
+
+	class OverflowException : public std::exception {
+	  public:
+		OverflowException(void) {}
+		OverflowException(OverflowException const &cp) { *this = cp; }
+		~OverflowException(void) throw() {}
+		OverflowException &operator=(OverflowException const &) { return *this; }
+		virtual const char *what() const throw() { return ("Value overflow"); }
+	};
+
+	class UnderflowException : public std::exception {
+	  public:
+		UnderflowException(void) {}
+		UnderflowException(UnderflowException const &cp) { *this = cp; }
+		~UnderflowException(void) throw() {}
+		UnderflowException &operator=(UnderflowException const &) { return *this; }
+		virtual const char *what() const throw() { return ("Value underflow"); }
+	};
+
+	class DivisionByZeroException : public std::exception {
+	  public:
+		DivisionByZeroException(void) {}
+		DivisionByZeroException(DivisionByZeroException const &cp) { *this = cp; }
+		~DivisionByZeroException(void) throw() {}
+		DivisionByZeroException &operator=(DivisionByZeroException const &) { return *this; }
+		virtual const char *what() const throw() { return ("Division by zero"); }
+	};
 
 private:
 	T _value;

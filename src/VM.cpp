@@ -3,8 +3,7 @@
 # define FILEIN (this->_readFromFile ? ifs : std::cin)
 
 VM::VM(std::string s) : _readFromFile(1), _continueReading(false), _filename(s) {
-	// this->_nums.push_back(f.createOperand(Int8, "7"));
-
+	this->_nums.push_back(f.createOperand(Int8, "7"));
 }
 VM::VM(void) : _readFromFile(0), _continueReading(true), _filename("") { }
 VM::VM(VM const &cp) { *this = cp; }
@@ -14,9 +13,10 @@ VM &VM::operator=(VM const &rhs)
 {
 	if (this != &rhs)
 	{
+		for (auto it = this->_nums.begin(); it != this->_nums.end(); it++)
+			delete *it;
+		this->_nums.clear();
 		this->_nums = rhs._nums;
-		for (auto it = rhs._nums.begin(); it < _nums.end(); it++)
-			std::cout << (*it)->toString() << std::endl;
 		this->_readFromFile = rhs._readFromFile;
 		this->_filename = rhs._filename;
 	}
@@ -37,6 +37,8 @@ void		VM::readLoop( void )
 	{
 		this->parseIn(this->lexIn(str), str);
 	}
+	if (this->_continueReading)
+		throw UnexpectedEOFException();
 }
 
 eCommand	VM::lexIn( std::string &s )
@@ -59,4 +61,20 @@ VM::InvalidFileException::~InvalidFileException( void ) throw() { }
 VM::InvalidFileException& VM::InvalidFileException::operator=( InvalidFileException const &) { return *this; }
 const char* VM::InvalidFileException::what( void ) const throw() {
 	return "Invalid file";
+}
+
+VM::PopOnEmptyStackException::PopOnEmptyStackException( void ) { }
+VM::PopOnEmptyStackException::PopOnEmptyStackException( PopOnEmptyStackException const & cp) { *this = cp; }
+VM::PopOnEmptyStackException::~PopOnEmptyStackException( void ) throw() { }
+VM::PopOnEmptyStackException& VM::PopOnEmptyStackException::operator=( PopOnEmptyStackException const &) { return *this; }
+const char* VM::PopOnEmptyStackException::what( void ) const throw() {
+	return "Pop on empty stack";
+}
+
+VM::UnexpectedEOFException::UnexpectedEOFException( void ) { }
+VM::UnexpectedEOFException::UnexpectedEOFException( UnexpectedEOFException const & cp) { *this = cp; }
+VM::UnexpectedEOFException::~UnexpectedEOFException( void ) throw() { }
+VM::UnexpectedEOFException& VM::UnexpectedEOFException::operator=( UnexpectedEOFException const &) { return *this; }
+const char* VM::UnexpectedEOFException::what( void ) const throw() {
+	return "Unexpected EOF while parsing";
 }

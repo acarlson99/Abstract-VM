@@ -2,13 +2,10 @@
 
 int main(int argc, char **argv)
 {
-	std::string str;
-	std::fstream ifs;
-	VM machine;
-	Factory f;
-
-	static_cast<void>(argc);
-	static_cast<void>(argv);
+	std::string		str;
+	std::fstream	ifs;
+	VM				machine;
+	Factory			f;
 
 	if (argc > 1)
 	{

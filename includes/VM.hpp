@@ -58,7 +58,7 @@ public:
 	void		parseIn( eCommand, std::string& );
 
 	class InvalidFileException : public std::exception {
-	  public:
+	public:
 		InvalidFileException(void);
 		InvalidFileException(InvalidFileException const &cp);
 		~InvalidFileException(void) throw();
@@ -66,12 +66,31 @@ public:
 		virtual const char *what() const throw();
 	};
 
+	class PopOnEmptyStackException : public std::exception {
+	public:
+		PopOnEmptyStackException(void);
+		PopOnEmptyStackException(PopOnEmptyStackException const &cp);
+		~PopOnEmptyStackException(void) throw();
+		PopOnEmptyStackException &operator=(PopOnEmptyStackException const &);
+		virtual const char *what() const throw();
+	};
+
+	class UnexpectedEOFException : public std::exception {
+	public:
+		UnexpectedEOFException( void );
+		UnexpectedEOFException( UnexpectedEOFException const & cp);
+		~UnexpectedEOFException( void ) throw();
+		UnexpectedEOFException& operator=( UnexpectedEOFException const & e);
+		virtual const char* what() const throw();
+	};
+
+
 private:
-	std::vector<IOperand *>			_nums;
-	bool							_readFromFile;
-	bool							_continueReading;
-	std::string						_filename;
-	Factory							f;
+	std::vector<IOperand const *>		_nums;
+	bool								_readFromFile;
+	bool								_continueReading;
+	std::string							_filename;
+	Factory								f;
 
 };
 
