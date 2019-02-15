@@ -30,7 +30,11 @@
 */
 
 enum eCommand {
-	Push,
+	PushInt8,
+	PushInt16,
+	PushInt32,
+	PushFloat,
+	PushDouble,
 	Pop,
 	Dump,
 	Assert,
@@ -41,7 +45,7 @@ enum eCommand {
 	Mod,
 	Print,
 	Exit,
-	Eof
+	Eof,
 };
 
 class VM {
@@ -53,9 +57,7 @@ public:
 	~VM( void );
 	VM& operator=( VM const &);
 
-	void		readLoop( void );
-	eCommand	lexIn( std::string& );
-	void		parseIn( eCommand, std::string& );
+	void		run( void );
 
 	class InvalidFileException : public std::exception {
 	public:
@@ -84,9 +86,45 @@ public:
 		virtual const char* what() const throw();
 	};
 
+	class UntrueAssertionException : public std::exception {
+	public:
+		UntrueAssertionException( void );
+		UntrueAssertionException( UntrueAssertionException const & cp);
+		~UntrueAssertionException( void ) throw();
+		UntrueAssertionException& operator=( UntrueAssertionException const & e);
+		virtual const char* what() const throw();
+	};
+
+	class NoExitException : public std::exception {
+	public:
+		NoExitException( void );
+		NoExitException( NoExitException const & cp);
+		~NoExitException( void ) throw();
+		NoExitException& operator=( NoExitException const & e);
+		virtual const char* what() const throw();
+	};
 
 private:
+	void				readLoop( void );
+	void				evaluateLoop( void );
+	eCommand			lexIn( std::string& );
+	void				parseIn( eCommand, std::string& );
+	IOperand const		*popUtil( void );
+
+	void				push( void );
+	void				pop( void );
+	void				dump( void );
+	void				assert( void );
+	void				add( void );
+	void				sub( void );
+	void				mul( void );
+	void				div( void );
+	void				mod( void );
+	void				print( void );
+
 	std::vector<IOperand const *>		_nums;
+	std::vector<eCommand>				_commands;
+	std::vector<std::string>			_args;
 	bool								_readFromFile;
 	bool								_continueReading;
 	std::string							_filename;

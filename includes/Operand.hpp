@@ -80,7 +80,7 @@ public:
 		OverflowException(OverflowException const &cp) { *this = cp; }
 		~OverflowException(void) throw() {}
 		OverflowException &operator=(OverflowException const &) { return *this; }
-		virtual const char *what() const throw() { return ("Value overflow"); }
+		virtual const char *what() const throw() { return ("Overflow"); }
 	};
 
 	class UnderflowException : public std::exception {
@@ -89,7 +89,7 @@ public:
 		UnderflowException(UnderflowException const &cp) { *this = cp; }
 		~UnderflowException(void) throw() {}
 		UnderflowException &operator=(UnderflowException const &) { return *this; }
-		virtual const char *what() const throw() { return ("Value underflow"); }
+		virtual const char *what() const throw() { return ("Underflow"); }
 	};
 
 	class DivisionByZeroException : public std::exception {
@@ -98,7 +98,7 @@ public:
 		DivisionByZeroException(DivisionByZeroException const &cp) { *this = cp; }
 		~DivisionByZeroException(void) throw() {}
 		DivisionByZeroException &operator=(DivisionByZeroException const &) { return *this; }
-		virtual const char *what() const throw() { return ("Division by zero"); }
+		virtual const char *what() const throw() { return ("DivisionByZero"); }
 	};
 
 private:
