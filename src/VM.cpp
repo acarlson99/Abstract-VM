@@ -41,23 +41,6 @@ void		VM::readLoop( void )
 	std::string		str;
 	std::fstream	ifs;
 
-/*
-** 	if (this->_readFromFile)
-** 	{
-** 		ifs.open(this->_filename);
-** 		if (!ifs)
-** 			throw InvalidFileException();
-** 	}
-** 	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
-** 	{
-** 		this->parseIn(this->lexIn(str), str);
-** 	}
-** 	if (this->_continueReading)
-** 		throw UnexpectedEOFException();
-*/
-
-	std::string		expr;
-	lexertk::generator generator;
 
 	if (this->_readFromFile)
 	{
@@ -65,17 +48,12 @@ void		VM::readLoop( void )
 		if (!ifs)
 			throw InvalidFileException();
 	}
-	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, expr))
+	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
 	{
-		if (!generator.process(expr))
-		{
-			std::cout << "Failed to lex: " << expr << std::endl;
-			std::exit(1);
-		}
-		lexertk::helper::dump(generator);
+		this->parseIn(this->lexIn(str), str);
 	}
- 	if (this->_continueReading)
- 		throw UnexpectedEOFException();
+	if (this->_continueReading)
+		throw UnexpectedEOFException();
 }
 
 void		VM::evaluateLoop( void )
@@ -120,30 +98,37 @@ void		VM::dump( void )
 
 void		VM::assert( void )
 {
+	std::cout << "assert called" << std::endl;
 }
 
 void		VM::add( void )
 {
+	std::cout << "add called" << std::endl;
 }
 
 void		VM::sub( void )
 {
+	std::cout << "sub called" << std::endl;
 }
 
 void		VM::mul( void )
 {
+	std::cout << "mul called" << std::endl;
 }
 
 void		VM::div( void )
 {
+	std::cout << "div called" << std::endl;
 }
 
 void		VM::mod( void )
 {
+	std::cout << "mod called" << std::endl;
 }
 
 void		VM::print( void )
 {
+	std::cout << "print called" << std::endl;
 }
 
 VM::InvalidFileException::InvalidFileException( void ) { }

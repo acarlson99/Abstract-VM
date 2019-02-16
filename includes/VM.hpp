@@ -4,7 +4,6 @@
 # include <vector>
 # include <fstream>
 # include "Factory.hpp"
-# include "lexertk.hpp"
 
 /*
 ** COMMANDS
