@@ -4,6 +4,7 @@
 # include <vector>
 # include <fstream>
 # include "Factory.hpp"
+# include "Lexer.hpp"
 
 /*
 ** COMMANDS
@@ -28,25 +29,6 @@
 ** exit - terminates execution
 ** ;; - EOF for stdin
 */
-
-enum eCommand {
-	PushInt8,
-	PushInt16,
-	PushInt32,
-	PushFloat,
-	PushDouble,
-	Pop,
-	Dump,
-	Assert,
-	Add,
-	Sub,
-	Mul,
-	Div,
-	Mod,
-	Print,
-	Exit,
-	Eof,
-};
 
 class VM {
 
@@ -111,19 +93,19 @@ private:
 	void				parseIn( eCommand, std::string& );
 	IOperand const		*popUtil( void );
 
-	void				push( void );
-	void				pop( void );
-	void				dump( void );
-	void				assert( void );
-	void				add( void );
-	void				sub( void );
-	void				mul( void );
-	void				div( void );
-	void				mod( void );
-	void				print( void );
+	void				VMpush( void );
+	void				VMpop( void );
+	void				VMdump( void );
+	void				VMassert( void );
+	void				VMadd( void );
+	void				VMsub( void );
+	void				VMmul( void );
+	void				VMdiv( void );
+	void				VMmod( void );
+	void				VMprint( void );
 
 	std::vector<IOperand const *>		_nums;
-	// std::vector<Lex const *>			_commands;
+	std::vector<Lexer const *>			_commands;
 	bool								_readFromFile;
 	bool								_continueReading;
 	std::string							_filename;

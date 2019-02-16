@@ -3,7 +3,7 @@
 Token::Token( void )
 {
 	this->_s = new std::string("");
-	this->_type = ERR;
+	this->_type = Error;
 }
 
 Token::Token( Token const & cp) { *this = cp; }

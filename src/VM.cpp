@@ -50,7 +50,7 @@ void		VM::readLoop( void )
 	}
 	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
 	{
-		this->parseIn(this->lexIn(str), str);
+		Lexer::generateTokens(str);
 	}
 	if (this->_continueReading)
 		throw UnexpectedEOFException();
@@ -59,12 +59,6 @@ void		VM::readLoop( void )
 void		VM::evaluateLoop( void )
 {
 	throw NoExitException();
-}
-
-eCommand	VM::lexIn( std::string &s )
-{
-	static_cast<void>(s);
-	return (Exit);
 }
 
 void		VM::parseIn( eCommand c, std::string &s )
@@ -82,51 +76,51 @@ IOperand const		*VM::popUtil( void )
 	return (o);
 }
 
-void		VM::push( void )
+void		VM::VMpush( void )
 {
 	// push_back
 }
 
-void		VM::pop( void )
+void		VM::VMpop( void )
 {
 	delete this->popUtil();
 }
 
-void		VM::dump( void )
+void		VM::VMdump( void )
 {
 }
 
-void		VM::assert( void )
+void		VM::VMassert( void )
 {
 	std::cout << "assert called" << std::endl;
 }
 
-void		VM::add( void )
+void		VM::VMadd( void )
 {
 	std::cout << "add called" << std::endl;
 }
 
-void		VM::sub( void )
+void		VM::VMsub( void )
 {
 	std::cout << "sub called" << std::endl;
 }
 
-void		VM::mul( void )
+void		VM::VMmul( void )
 {
 	std::cout << "mul called" << std::endl;
 }
 
-void		VM::div( void )
+void		VM::VMdiv( void )
 {
 	std::cout << "div called" << std::endl;
 }
 
-void		VM::mod( void )
+void		VM::VMmod( void )
 {
 	std::cout << "mod called" << std::endl;
 }
 
-void		VM::print( void )
+void		VM::VMprint( void )
 {
 	std::cout << "print called" << std::endl;
 }
