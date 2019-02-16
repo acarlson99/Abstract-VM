@@ -2,9 +2,7 @@
 
 # define FILEIN (this->_readFromFile ? ifs : std::cin)
 
-VM::VM(std::string s) : _readFromFile(1), _continueReading(false), _filename(s) {
-	this->_nums.push_back(f.createOperand(Int8, "7"));
-}
+VM::VM(std::string s) : _readFromFile(1), _continueReading(false), _filename(s) { }
 VM::VM(void) : _readFromFile(0), _continueReading(true), _filename("") { }
 VM::VM(VM const &cp) { *this = cp; }
 VM::~VM(void)
@@ -23,9 +21,9 @@ VM &VM::operator=(VM const &rhs)
 			delete *it;
 		this->_nums.clear();
 		for (auto it = rhs._nums.begin(); it != rhs._nums.end(); it++)
-			this->_nums.push_back(this->f.createOperand((*it)->getType(), (*it)->toString()));
-		this->_commands = rhs._commands;
-		this->_args = rhs._args;
+			this->_nums.push_back(this->_f.createOperand((*it)->getType(), (*it)->toString()));
+		// this->_commands = rhs._commands;
+		// this->_args = rhs._args;
 		this->_readFromFile = rhs._readFromFile;
 		this->_filename = rhs._filename;
 	}
@@ -42,18 +40,42 @@ void		VM::readLoop( void )
 {
 	std::string		str;
 	std::fstream	ifs;
+
+/*
+** 	if (this->_readFromFile)
+** 	{
+** 		ifs.open(this->_filename);
+** 		if (!ifs)
+** 			throw InvalidFileException();
+** 	}
+** 	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
+** 	{
+** 		this->parseIn(this->lexIn(str), str);
+** 	}
+** 	if (this->_continueReading)
+** 		throw UnexpectedEOFException();
+*/
+
+	std::string		expr;
+	lexertk::generator generator;
+
 	if (this->_readFromFile)
 	{
 		ifs.open(this->_filename);
 		if (!ifs)
 			throw InvalidFileException();
 	}
-	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
+	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, expr))
 	{
-		this->parseIn(this->lexIn(str), str);
+		if (!generator.process(expr))
+		{
+			std::cout << "Failed to lex: " << expr << std::endl;
+			std::exit(1);
+		}
+		lexertk::helper::dump(generator);
 	}
-	if (this->_continueReading)
-		throw UnexpectedEOFException();
+ 	if (this->_continueReading)
+ 		throw UnexpectedEOFException();
 }
 
 void		VM::evaluateLoop( void )
@@ -71,8 +93,6 @@ void		VM::parseIn( eCommand c, std::string &s )
 {
 	static_cast<void>(c);
 	static_cast<void>(s);
-	if (s == ";;")
-		this->_continueReading = false;
 }
 
 IOperand const		*VM::popUtil( void )

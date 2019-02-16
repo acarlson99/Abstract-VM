@@ -4,6 +4,7 @@
 # include <vector>
 # include <fstream>
 # include "Factory.hpp"
+# include "lexertk.hpp"
 
 /*
 ** COMMANDS
@@ -123,12 +124,11 @@ private:
 	void				print( void );
 
 	std::vector<IOperand const *>		_nums;
-	std::vector<eCommand>				_commands;
-	std::vector<std::string>			_args;
+	// std::vector<Lex const *>			_commands;
 	bool								_readFromFile;
 	bool								_continueReading;
 	std::string							_filename;
-	Factory								f;
+	Factory								_f;
 
 };
 

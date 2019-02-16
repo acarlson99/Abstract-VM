@@ -3,7 +3,7 @@ SRC = src/
 CPPFLAGS = -Wall -Wextra -Werror -pedantic -std=c++14
 DFLAGS = -Wall -Wextra -pedantic -std=c++14 -g
 OBJDIR = .obj/
-INCLUDES = -I includes/
+INCLUDES = -I includes/ -I lexertk
 FILES = main VM Factory
 CPPFILES = $(addsuffix .cpp, $(FILES))
 OFILES = $(addprefix $(OBJDIR), $(addsuffix .o, $(FILES)))
