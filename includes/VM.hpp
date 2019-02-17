@@ -101,27 +101,29 @@ private:
 	void				readLoop( void );
 	void				evaluateLoop( void );
 	eCommand			lexIn( std::string& );
-	void				parseIn( eCommand, std::string& );
 	IOperand const		*popUtil( void );
 
-	void				VMpush( void );
-	void				VMpop( void );
-	void				VMdump( void );
-	void				VMassert( void );
-	void				VMadd( void );
-	void				VMsub( void );
-	void				VMmul( void );
-	void				VMdiv( void );
-	void				VMmod( void );
-	void				VMprint( void );
+	void				VMpush( Lexer const* );
+	void				VMpop( Lexer const* );
+	void				VMdump( Lexer const* );
+	void				VMassert( Lexer const* );
+	void				VMadd( Lexer const* );
+	void				VMsub( Lexer const* );
+	void				VMmul( Lexer const* );
+	void				VMdiv( Lexer const* );
+	void				VMmod( Lexer const* );
+	void				VMprint( Lexer const* );
+	void				VMexit( Lexer const* );
+	void				VMcatch( Lexer const* );
 
 	std::vector<IOperand const *>		_nums;
 	std::vector<Lexer const *>			_commands;
 	bool								_readFromFile;
 	bool								_continueReading;
 	std::string							_filename;
-	Factory								_f;
+	Factory								_factory;
 
+	std::map<eCommand, void (VM::*)(Lexer const*)> _funcs;
 };
 
 #endif

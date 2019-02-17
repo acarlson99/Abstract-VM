@@ -42,30 +42,35 @@ public:
 	virtual IOperand const *operator+(IOperand const &rhs) const
 	{
 		static_cast<void>(rhs);
+		std::cout << "+ operator called" << std::endl;
 		return (NULL);
 	}
 
 	virtual IOperand const *operator-(IOperand const &rhs) const
 	{
 		static_cast<void>(rhs);
+		std::cout << "- operator called" << std::endl;
 		return (NULL);
 	}
 
 	virtual IOperand const *operator*(IOperand const &rhs) const
 	{
 		static_cast<void>(rhs);
+		std::cout << "* operator called" << std::endl;
 		return (NULL);
 	}
 
 	virtual IOperand const *operator/(IOperand const &rhs) const
 	{
 		static_cast<void>(rhs);
+		std::cout << "/ operator called" << std::endl;
 		return (NULL);
 	}
 
 	virtual IOperand const *operator%(IOperand const &rhs) const
 	{
 		static_cast<void>(rhs);
+		std::cout << "% operator called" << std::endl;
 		return (NULL);
 	}
 

@@ -2,9 +2,60 @@
 
 # define FILEIN (this->_readFromFile ? ifs : std::cin)
 
-VM::VM(std::string s) : _readFromFile(1), _continueReading(false), _filename(s) { }
-VM::VM(void) : _readFromFile(0), _continueReading(true), _filename("") { }
+VM::VM(std::string s) : _readFromFile(1), _continueReading(false), _filename(s)
+{
+	_funcs[PushInt8] = &VM::VMpush;
+	_funcs[PushInt16] = &VM::VMpush;
+	_funcs[PushInt32] = &VM::VMpush;
+	_funcs[PushFloat] = &VM::VMpush;
+	_funcs[PushDouble] = &VM::VMpush;
+	_funcs[Pop] = &VM::VMpop;
+	_funcs[Dump] = &VM::VMdump;
+	_funcs[AssertInt8] = &VM::VMassert;
+	_funcs[AssertInt16] = &VM::VMassert;
+	_funcs[AssertInt32] = &VM::VMassert;
+	_funcs[AssertFloat] = &VM::VMassert;
+	_funcs[AssertDouble] = &VM::VMassert;
+	_funcs[Add] = &VM::VMadd;
+	_funcs[Sub] = &VM::VMsub;
+	_funcs[Mul] = &VM::VMmul;
+	_funcs[Div] = &VM::VMdiv;
+	_funcs[Mod] = &VM::VMmod;
+	_funcs[Print] = &VM::VMprint;
+	_funcs[Exit] = &VM::VMexit;	// exit
+	_funcs[Eof] = &VM::VMcatch;	// ignore
+	_funcs[Comment] = &VM::VMcatch;	// ignore
+	_funcs[Error] = &VM::VMcatch;	// this should be handled in read_loop
+}
+
+VM::VM(void) : _readFromFile(0), _continueReading(true), _filename("")
+{
+	_funcs[PushInt8] = &VM::VMpush;
+	_funcs[PushInt16] = &VM::VMpush;
+	_funcs[PushInt32] = &VM::VMpush;
+	_funcs[PushFloat] = &VM::VMpush;
+	_funcs[PushDouble] = &VM::VMpush;
+	_funcs[Pop] = &VM::VMpop;
+	_funcs[Dump] = &VM::VMdump;
+	_funcs[AssertInt8] = &VM::VMassert;
+	_funcs[AssertInt16] = &VM::VMassert;
+	_funcs[AssertInt32] = &VM::VMassert;
+	_funcs[AssertFloat] = &VM::VMassert;
+	_funcs[AssertDouble] = &VM::VMassert;
+	_funcs[Add] = &VM::VMadd;
+	_funcs[Sub] = &VM::VMsub;
+	_funcs[Mul] = &VM::VMmul;
+	_funcs[Div] = &VM::VMdiv;
+	_funcs[Mod] = &VM::VMmod;
+	_funcs[Print] = &VM::VMprint;
+	_funcs[Exit] = &VM::VMexit;	// exit
+	_funcs[Eof] = &VM::VMcatch;	// ignore
+	_funcs[Comment] = &VM::VMcatch;	// ignore
+	_funcs[Error] = &VM::VMcatch;	// this should be handled in read_loop
+}
+
 VM::VM(VM const &cp) { *this = cp; }
+
 VM::~VM(void)
 {
 	for (auto it = this->_nums.begin(); it != this->_nums.end(); it++)
@@ -21,7 +72,7 @@ VM &VM::operator=(VM const &rhs)
 			delete *it;
 		this->_nums.clear();
 		for (auto it = rhs._nums.begin(); it != rhs._nums.end(); it++)
-			this->_nums.push_back(this->_f.createOperand((*it)->getType(), (*it)->toString()));
+			this->_nums.push_back(this->_factory.createOperand((*it)->getType(), (*it)->toString()));
 		for (auto it = this->_commands.begin(); it != this->_commands.end(); it++)
 			delete *it;
 		this->_commands.clear();
@@ -35,14 +86,13 @@ VM &VM::operator=(VM const &rhs)
 
 void		VM::printCommands()
 {
-	for (auto it = this->_commands.begin(); it != this->_commands.end(); it++)
-		std::cout << **it << std::endl;
+	for (auto it : this->_commands)
+		std::cout << *it << std::endl;
 }
 
 void		VM::run( void )
 {
 	readLoop();
-	this->printCommands();
 	evaluateLoop();
 }
 
@@ -51,6 +101,7 @@ void		VM::readLoop( void )
 	std::string		str;
 	std::fstream	ifs;
 	Lexer			*l;
+	bool			pushed;
 
 	if (this->_readFromFile)
 	{
@@ -60,14 +111,20 @@ void		VM::readLoop( void )
 	}
 	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
 	{
+		pushed = 1;
 		l = Lexer::generateTokens(str);
 		std::cout << *l << std::endl;
 		if (l->getCommand() == Error)
 			throw InvalidCommandException();
 		else if (l->getCommand() == Eof)
 			this->_continueReading = false;
-		else
+		else if (l->getCommand() != Comment)
+		{
 			this->_commands.push_back(l);
+			pushed = 0;
+		}
+		if (pushed)
+			delete l;
 	}
 	if (this->_continueReading)
 		throw UnexpectedEOFException();
@@ -75,13 +132,14 @@ void		VM::readLoop( void )
 
 void		VM::evaluateLoop( void )
 {
+	std::cout << "EVAL" << std::endl;
+	for (auto it : this->_commands)
+	{
+		std::cout << *it << std::endl;
+		(this->*_funcs.at(it->getCommand()))(it);
+		delete it;
+	}
 	throw NoExitException();
-}
-
-void		VM::parseIn( eCommand c, std::string &s )
-{
-	static_cast<void>(c);
-	static_cast<void>(s);
 }
 
 IOperand const		*VM::popUtil( void )
@@ -93,53 +151,65 @@ IOperand const		*VM::popUtil( void )
 	return (o);
 }
 
-void		VM::VMpush( void )
+void		VM::VMpush( Lexer const *l )
 {
-	// push_back
+	this->_nums.push_back(this->_factory.createOperand(l->getType(), l->getArg()));
 }
 
-void		VM::VMpop( void )
+void		VM::VMpop( Lexer const* )
 {
 	delete this->popUtil();
 }
 
-void		VM::VMdump( void )
+void		VM::VMdump( Lexer const* )
 {
+	for (auto it : this->_nums)
+		std::cout << it->toString() << std::endl;
 }
 
-void		VM::VMassert( void )
+void		VM::VMassert( Lexer const* )
 {
 	std::cout << "assert called" << std::endl;
 }
 
-void		VM::VMadd( void )
+void		VM::VMadd( Lexer const* )
 {
 	std::cout << "add called" << std::endl;
 }
 
-void		VM::VMsub( void )
+void		VM::VMsub( Lexer const* )
 {
 	std::cout << "sub called" << std::endl;
 }
 
-void		VM::VMmul( void )
+void		VM::VMmul( Lexer const* )
 {
 	std::cout << "mul called" << std::endl;
 }
 
-void		VM::VMdiv( void )
+void		VM::VMdiv( Lexer const* )
 {
 	std::cout << "div called" << std::endl;
 }
 
-void		VM::VMmod( void )
+void		VM::VMmod( Lexer const* )
 {
 	std::cout << "mod called" << std::endl;
 }
 
-void		VM::VMprint( void )
+void		VM::VMprint( Lexer const* )
 {
 	std::cout << "print called" << std::endl;
+}
+
+void		VM::VMexit( Lexer const* )
+{
+	std::exit(0);
+}
+
+void		VM::VMcatch( Lexer const *l)
+{
+	std::cout << "VM::VMcatch called on " << *l << " somehow" << std::endl;
 }
 
 VM::InvalidFileException::InvalidFileException( void ) { }

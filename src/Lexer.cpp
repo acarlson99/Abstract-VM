@@ -1,30 +1,5 @@
 #include "Lexer.hpp"
 
-static std::string		opToStr[] = {
-	"PushInt8",
-	"PushInt16",
-	"PushInt32",
-	"PushFloat",
-	"PushDouble",
-	"Pop",
-	"Dump",
-	"AssertInt8",
-	"AssertInt16",
-	"AssertInt32",
-	"AssertFloat",
-	"AssertDouble",
-	"Add",
-	"Sub",
-	"Mul",
-	"Div",
-	"Mod",
-	"Print",
-	"Exit",
-	"Eof",
-	"Comment",
-	"Error",
-};
-
 //             command type    arg
 static std::regex		patterns[] = {
 	std::regex("^push (int8)\\((\\d+)\\) *;?"),
@@ -121,6 +96,31 @@ Lexer		*Lexer::generateTokens( std::string &s )
 		}
 	return (new Lexer());
 }
+
+static std::string		opToStr[] = {
+	"PushInt8",
+	"PushInt16",
+	"PushInt32",
+	"PushFloat",
+	"PushDouble",
+	"Pop",
+	"Dump",
+	"AssertInt8",
+	"AssertInt16",
+	"AssertInt32",
+	"AssertFloat",
+	"AssertDouble",
+	"Add",
+	"Sub",
+	"Mul",
+	"Div",
+	"Mod",
+	"Print",
+	"Exit",
+	"Eof",
+	"Comment",
+	"Error",
+};
 
 std::ostream	&operator<<( std::ostream &o, Lexer const &l )
 {
