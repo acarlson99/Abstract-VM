@@ -5,6 +5,8 @@
 # include <string>
 # include <math.h>
 
+# ifndef OPTYPE
+#  define OPTYPE
 enum eOperandType {
 	Int8,
 	Int16,
@@ -12,6 +14,7 @@ enum eOperandType {
 	Float,
 	Double,
 };
+#endif
 
 class IOperand {
 

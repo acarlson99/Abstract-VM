@@ -1,15 +1,15 @@
-pushInt8
-pushInt16
-pushInt32
-pushFloat
-pushDouble
+push int8(12)
+push int16(12)
+push int32(12)
+push float(12)
+push double(12)
 pop
 dump
-assertInt8
-assertInt16
-assertInt32
-assertFloat
-assertDouble
+assert int8(12)
+assert int16(12)
+assert int32(12)
+assert float(12)
+assert double(12)
 add
 sub
 mul
@@ -17,5 +17,7 @@ div
 mod
 print
 exit
-eof
-comment
+;;
+; aaaaaaaaaaaa
+
+ERRORLINE

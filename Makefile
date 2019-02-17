@@ -4,7 +4,7 @@ CPPFLAGS = -Wall -Wextra -Werror -pedantic -std=c++14
 DFLAGS = -Wall -Wextra -pedantic -std=c++14 -g
 OBJDIR = .obj/
 INCLUDES = -I includes/
-FILES = main VM Factory Lexer Token
+FILES = main VM Factory Lexer
 CPPFILES = $(addsuffix .cpp, $(FILES))
 OFILES = $(addprefix $(OBJDIR), $(addsuffix .o, $(FILES)))
 NAME = avm

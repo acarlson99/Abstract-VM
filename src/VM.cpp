@@ -50,6 +50,7 @@ void		VM::readLoop( void )
 	}
 	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
 	{
+		std::cout << "START " << str << std::endl;
 		Lexer::generateTokens(str);
 	}
 	if (this->_continueReading)
