@@ -86,6 +86,17 @@ public:
 		virtual const char* what() const throw();
 	};
 
+	class InvalidCommandException : public std::exception {
+	public:
+		InvalidCommandException( void );
+		InvalidCommandException( InvalidCommandException const & cp);
+		~InvalidCommandException( void ) throw();
+		InvalidCommandException& operator=( InvalidCommandException const & e);
+		virtual const char* what() const throw();
+	};
+
+	void	printCommands();
+
 private:
 	void				readLoop( void );
 	void				evaluateLoop( void );

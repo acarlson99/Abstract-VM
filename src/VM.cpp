@@ -22,17 +22,27 @@ VM &VM::operator=(VM const &rhs)
 		this->_nums.clear();
 		for (auto it = rhs._nums.begin(); it != rhs._nums.end(); it++)
 			this->_nums.push_back(this->_f.createOperand((*it)->getType(), (*it)->toString()));
-		// this->_commands = rhs._commands;
-		// this->_args = rhs._args;
+		for (auto it = this->_commands.begin(); it != this->_commands.end(); it++)
+			delete *it;
+		this->_commands.clear();
+		for (auto it = rhs._commands.begin(); it != rhs._commands.end(); it++)
+			this->_commands.push_back(new Lexer(**it));
 		this->_readFromFile = rhs._readFromFile;
 		this->_filename = rhs._filename;
 	}
 	return *this;
 }
 
+void		VM::printCommands()
+{
+	for (auto it = this->_commands.begin(); it != this->_commands.end(); it++)
+		std::cout << **it << std::endl;
+}
+
 void		VM::run( void )
 {
 	readLoop();
+	this->printCommands();
 	evaluateLoop();
 }
 
@@ -40,7 +50,7 @@ void		VM::readLoop( void )
 {
 	std::string		str;
 	std::fstream	ifs;
-
+	Lexer			*l;
 
 	if (this->_readFromFile)
 	{
@@ -50,8 +60,14 @@ void		VM::readLoop( void )
 	}
 	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
 	{
-		std::cout << "START " << str << std::endl;
-		Lexer::generateTokens(str);
+		l = Lexer::generateTokens(str);
+		std::cout << *l << std::endl;
+		if (l->getCommand() == Error)
+			throw InvalidCommandException();
+		else if (l->getCommand() == Eof)
+			this->_continueReading = false;
+		else
+			this->_commands.push_back(l);
 	}
 	if (this->_continueReading)
 		throw UnexpectedEOFException();
@@ -164,4 +180,12 @@ VM::NoExitException::~NoExitException( void ) throw() { }
 VM::NoExitException& VM::NoExitException::operator=( NoExitException const &) { return *this; }
 const char* VM::NoExitException::what( void ) const throw() {
 	return "NoExit";
+}
+
+VM::InvalidCommandException::InvalidCommandException( void ) { }
+VM::InvalidCommandException::InvalidCommandException( InvalidCommandException const & cp) { *this = cp; }
+VM::InvalidCommandException::~InvalidCommandException( void ) throw() { }
+VM::InvalidCommandException& VM::InvalidCommandException::operator=( InvalidCommandException const &) { return *this; }
+const char* VM::InvalidCommandException::what( void ) const throw() {
+	return "InvalidCommandException";
 }

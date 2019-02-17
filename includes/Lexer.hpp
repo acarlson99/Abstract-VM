@@ -3,6 +3,7 @@
 
 # include <vector>
 # include <regex>
+# include <map>
 # include <iostream>
 
 enum eCommand {
@@ -44,19 +45,25 @@ enum eOperandType {
 class Lexer {
 
 public:
-	Lexer( eCommand , eOperandType , double );
+	Lexer( eCommand , eOperandType , std::string );
+	Lexer( eCommand );
 	Lexer( void );
 	Lexer( Lexer const & cp);
 	~Lexer( void );
 	Lexer& operator=( Lexer const &);
 
-	static void		generateTokens( std::string& );
+	static Lexer		*generateTokens( std::string& );
+	eCommand			getCommand( void ) const;
+	eOperandType		getType( void ) const;
+	std::string const	&getArg( void ) const;
 
 private:
 	eCommand		_command;
 	eOperandType	_argType;
-	double			_arg;
+	std::string		*_arg;
 
 };
+
+std::ostream	&operator<<( std::ostream &o, Lexer const &f );
 
 #endif
