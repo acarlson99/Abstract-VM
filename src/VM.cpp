@@ -242,6 +242,7 @@ void		VM::VMdiv( Lexer const* )
 
 void		VM::VMmod( Lexer const* )
 {
+	// try a % b and print exception with l->line
 	std::cout << "mod called" << std::endl;
 }
 

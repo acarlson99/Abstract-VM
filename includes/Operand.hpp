@@ -81,28 +81,28 @@ public:
 
 	class OverflowException : public std::exception {
 	  public:
-		OverflowException(void) {}
-		OverflowException(OverflowException const &cp) { *this = cp; }
-		~OverflowException(void) throw() {}
-		OverflowException &operator=(OverflowException const &) { return *this; }
+		OverflowException( void ) { }
+		OverflowException( OverflowException const &cp ) { *this = cp; }
+		~OverflowException( void ) throw() { }
+		OverflowException &operator=( OverflowException const & ) { return *this; }
 		virtual const char *what() const throw() { return ("OverflowException"); }
 	};
 
 	class UnderflowException : public std::exception {
 	  public:
-		UnderflowException(void) {}
-		UnderflowException(UnderflowException const &cp) { *this = cp; }
-		~UnderflowException(void) throw() {}
-		UnderflowException &operator=(UnderflowException const &) { return *this; }
+		UnderflowException( void ) { }
+		UnderflowException( UnderflowException const &cp ) { *this = cp; }
+		~UnderflowException( void ) throw() { }
+		UnderflowException &operator=( UnderflowException const & ) { return *this; }
 		virtual const char *what() const throw() { return ("UnderflowException"); }
 	};
 
 	class DivisionByZeroException : public std::exception {
 	  public:
-		DivisionByZeroException(void) {}
-		DivisionByZeroException(DivisionByZeroException const &cp) { *this = cp; }
-		~DivisionByZeroException(void) throw() {}
-		DivisionByZeroException &operator=(DivisionByZeroException const &) { return *this; }
+		DivisionByZeroException( void ) { }
+		DivisionByZeroException( DivisionByZeroException const &cp ) { *this = cp; }
+		~DivisionByZeroException( void ) throw() { }
+		DivisionByZeroException &operator=( DivisionByZeroException const & ) { return *this; }
 		virtual const char *what() const throw() { return ("DivisionByZeroException"); }
 	};
 
