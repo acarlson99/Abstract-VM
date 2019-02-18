@@ -134,12 +134,12 @@ void		VM::readLoop( void )
 	{
 		pushed = 0;
 		l = Lexer::generateTokens(str, line);
-		std::cout << *l << std::endl;
+		// std::cout << *l << std::endl;	// TODO: delet this
 		try {
 			if (l->getCommand() == Error)
 			{
-				throw InvalidCommandException(line);
 				this->_eval = false;
+				throw InvalidCommandException(line);
 			}
 			else if (l->getCommand() == Eof)
 				this->_continueReading = false;
@@ -170,8 +170,13 @@ void		VM::evaluateLoop( void )
 	std::cout << "EVAL" << std::endl;	// TODO: delet this
 	for (auto it : this->_commands)
 	{
-		std::cout << *it << std::endl;	// TODO: delet this
-		(this->*_funcs.at(it->getCommand()))(it);
+		// std::cout << *it << std::endl;	// TODO: delet this
+		try {
+			(this->*_funcs.at(it->getCommand()))(it);
+		}
+		catch ( std::exception &e ) {
+			std::cout << e.what() << " line " << it->getLine() << std::endl;
+		}
 		delete it;
 	}
 	throw NoExitException();
@@ -190,12 +195,24 @@ IOperand const		*VM::popUtil( void )
 
 void		VM::VMpush( Lexer const *l )
 {
-	this->_nums.push_back(this->_factory.createOperand(l->getType(), l->getArg()));
+	try {
+		this->_nums.push_back(this->_factory.createOperand(l->getType(), l->getArg()));
+	}
+	catch ( std::exception &e ) {
+		std::cout << e.what() << l->getLine() << std::endl;
+		std::exit(1);
+	}
 }
 
-void		VM::VMpop( Lexer const* )
+void		VM::VMpop( Lexer const *l )
 {
-	delete this->popUtil();
+	try {
+		delete this->popUtil();
+	}
+	catch ( std::exception &e ) {
+		std::cout << e.what() << l->getLine() << std::endl;
+		std::exit(1);
+	}
 }
 
 void		VM::VMdump( Lexer const* )
@@ -220,9 +237,27 @@ void		VM::VMassert( Lexer const *l )
 	throw UntrueAssertionException(l->getLine());
 }
 
-void		VM::VMadd( Lexer const* )
+void		VM::VMadd( Lexer const *l )
 {
+	IOperand const		*a = NULL;
+	IOperand const		*b = NULL;
+
 	std::cout << "add called" << std::endl;
+
+	try {
+		a = this->popUtil();
+		b = this->popUtil();
+
+		IOperand const	*r = *a + *b;
+		std::cout << r->getType() << " " << " " << r->getPrecision() << " " << r->toString() << std::endl;
+	}
+	catch ( std::exception &e ) {
+		if (a)
+			delete a;
+		if (b)
+			delete b;
+		std::cout << e.what() << " line " << l->getLine() << std::endl;
+	}
 }
 
 void		VM::VMsub( Lexer const* )
@@ -263,7 +298,7 @@ void		VM::VMexit( Lexer const* )
 
 void		VM::VMcatch( Lexer const *l)
 {
-	std::cout << "VM::VMcatch called on " << *l << " somehow" << std::endl;
+	std::cout << "VM::VMcatch called on " << *l << " line " << l->getLine() << " somehow" << std::endl;
 }
 
 VM::InvalidFileException::InvalidFileException( void ) { }
@@ -271,7 +306,7 @@ VM::InvalidFileException::InvalidFileException( InvalidFileException const & cp)
 VM::InvalidFileException::~InvalidFileException( void ) throw() { }
 VM::InvalidFileException& VM::InvalidFileException::operator=( InvalidFileException const &) { return *this; }
 const char* VM::InvalidFileException::what( void ) const throw() {
-	return "InvalidFileException";
+	return "InvalidFile";
 }
 
 VM::PopOnEmptyStackException::PopOnEmptyStackException( size_t line ) : _line(line) { }
@@ -280,16 +315,13 @@ VM::PopOnEmptyStackException::PopOnEmptyStackException( PopOnEmptyStackException
 VM::PopOnEmptyStackException::~PopOnEmptyStackException( void ) throw() { }
 VM::PopOnEmptyStackException& VM::PopOnEmptyStackException::operator=( PopOnEmptyStackException const &rhs)
 { this->_line = rhs._line; return *this; }
-
 const char* VM::PopOnEmptyStackException::what( void ) const throw() {
 	if (this->_line)
 	{
-		std::stringstream	o;
-		o << "PopOnEmptyStackException on line " << this->_line;
-		std::cout << o.str().c_str() << std::endl;	// TODO: holy tits remove this
-		return o.str().c_str();
+		std::cout << "PopOnEmptyStack line " << this->_line;	// TODO: holy tits remove this
+		return "";
 	}
-	return "PopOnEmptyStackException";
+	return "PopOnEmptyStack";
 }
 
 VM::UnexpectedEOFException::UnexpectedEOFException( void ) { }
@@ -297,7 +329,7 @@ VM::UnexpectedEOFException::UnexpectedEOFException( UnexpectedEOFException const
 VM::UnexpectedEOFException::~UnexpectedEOFException( void ) throw() { }
 VM::UnexpectedEOFException& VM::UnexpectedEOFException::operator=( UnexpectedEOFException const &) { return *this; }
 const char* VM::UnexpectedEOFException::what( void ) const throw() {
-	return "UnexpectedEOFException";
+	return "UnexpectedEOF";
 }
 
 VM::UntrueAssertionException::UntrueAssertionException( size_t line ) : _line(line) { }
@@ -306,16 +338,13 @@ VM::UntrueAssertionException::UntrueAssertionException( UntrueAssertionException
 VM::UntrueAssertionException::~UntrueAssertionException( void ) throw() { }
 VM::UntrueAssertionException& VM::UntrueAssertionException::operator=( UntrueAssertionException const &rhs)
 { this->_line = rhs._line; return *this; }
-
 const char* VM::UntrueAssertionException::what( void ) const throw() {
 	if (this->_line)
 	{
-		std::stringstream	o;
-		o << "UntrueAssertionException on line " << this->_line;
-		std::cout << o.str().c_str() << std::endl;	// TODO: remove
-		return o.str().c_str();
+		std::cout << "UntrueAssertion line " << this->_line;	// TODO: remove
+		return "";
 	}
-	return "UntrueAssertionException";
+	return "UntrueAssertion";
 }
 
 VM::NoExitException::NoExitException( void ) { }
@@ -323,7 +352,7 @@ VM::NoExitException::NoExitException( NoExitException const & cp) { *this = cp; 
 VM::NoExitException::~NoExitException( void ) throw() { }
 VM::NoExitException& VM::NoExitException::operator=( NoExitException const &) { return *this; }
 const char* VM::NoExitException::what( void ) const throw() {
-	return "NoExitException";
+	return "NoExit";
 }
 
 VM::InvalidCommandException::InvalidCommandException( size_t line ) : _line(line) { }
@@ -332,16 +361,11 @@ VM::InvalidCommandException::InvalidCommandException( InvalidCommandException co
 VM::InvalidCommandException::~InvalidCommandException( void ) throw() { }
 VM::InvalidCommandException& VM::InvalidCommandException::operator=( InvalidCommandException const &rhs)
 { this->_line = rhs._line; return *this; }
-
 const char* VM::InvalidCommandException::what( void ) const throw() {
 	if (this->_line)
 	{
-		std::ostringstream	o;
-		o << "InvalidCommandException on line " << this->_line;
-		std::cout << o.str().c_str() << std::endl;	// TODO: KILLLLLLLLLLL
-		std::string		s = o.str();
-		const char		*c = s.c_str();
-		return (c);	// TODO: make this print the good output
+		std::cout << "InvalidCommand line " << this->_line;	// TODO: KILLLLLLLLLLL
+		return "";
 	}
-	return "InvalidCommandException";
+	return "InvalidCommand";
 }

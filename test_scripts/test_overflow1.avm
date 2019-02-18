@@ -1,0 +1,7 @@
+push int8(42)
+push int8(-90)
+dump
+push int8(10000000)
+dump
+exit
+;;

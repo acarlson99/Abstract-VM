@@ -57,6 +57,9 @@ $(OBJDIR):
 		echo " + $(NAME) : Created  $(CL_GREEN)$(OBJDIR)$(CL_WHITE)$(CL_WHITE)"; \
 fi) "
 
+tags:
+	find . -type f -iname "*.[ch]pp" | etags -
+
 j:
 	$(CC) $(DFLAGS) $(INCLUDES) $(addprefix $(SRC), $(CPPFILES)) -o $(DNAME)
 
