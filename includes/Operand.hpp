@@ -2,23 +2,31 @@
 #define OPERAND_HPP
 
 #include "IOperand.hpp"
+#include <iomanip>	// TODO: this can go
 
 template <typename T>
 class Operand : public IOperand {
+
 public:
 	Operand(std::string const &string, eOperandType type)
-		: _value(std::stod(string)), _type(type), _string(new std::string(string))
+		: _value(static_cast<T>(std::stod(string))), _type(type), _string(new std::string(string))
 		{
-			long long	n = static_cast<T>(std::stod(this->_string->c_str()));
-			std::cout << "AAAAAAAAAAA" << std::endl;
-			std::cout << (n == this->_value) << std::endl;
-			std::cout << "BBBBBBBBBBB" << std::endl;
-			std::cout << this->_value << std::endl;
-			std::cout << "CCCCCCCCCCC" << std::endl;
+			static const size_t size_arr[] = {
+				4,
+				6,
+				11,
+			};
+			long long		n = std::stol(this->_string->c_str());
+
 			std::cout << n << std::endl;
-			std::cout << "DDDDDDDDDDD" << std::endl;
-			std::cout << *_string << std::endl;
-			std::cout << "EEEEEEEEEEE" << std::endl;
+			// long double ldn = std::stold(this->_string->c_str());	// TODO: compare only integer part of doubles
+			std::cout << static_cast<int32_t>(this->_value) << std::endl;
+			if (this->_type < Int32 && (this->_value != n || this->_string->length() > size_arr[this->_type]))
+			{
+				std::cout << static_cast<int32_t>(this->_value) << " != " << n << std::endl;
+				std::cout << this->_string->length() << " > " << size_arr[this->_type] << std::endl;
+				throw OverflowException();
+			}
 		}
 
 	Operand(void) : _value(0), _type(Int8), _string(new std::string(std::string(std::to_string(this->_value)))) { }
@@ -38,8 +46,6 @@ public:
 			this->_string = new std::string(rhs._string->c_str());
 			return *this;
 		}
-
-	T							getValue(void) { return (_value); }
 
 	virtual int					getPrecision(void) const
 		{

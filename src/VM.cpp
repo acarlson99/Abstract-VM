@@ -199,7 +199,7 @@ void		VM::VMpush( Lexer const *l )
 		this->_nums.push_back(this->_factory.createOperand(l->getType(), l->getArg()));
 	}
 	catch ( std::exception &e ) {
-		std::cout << e.what() << l->getLine() << std::endl;
+		std::cout << e.what() << " line " << l->getLine() << std::endl;
 		std::exit(1);
 	}
 }
@@ -210,7 +210,7 @@ void		VM::VMpop( Lexer const *l )
 		delete this->popUtil();
 	}
 	catch ( std::exception &e ) {
-		std::cout << e.what() << l->getLine() << std::endl;
+		std::cout << e.what() << " line " << l->getLine() << std::endl;
 		std::exit(1);
 	}
 }

@@ -1,7 +1,8 @@
 push int8(42)
 push int8(-90)
+push float(100.3)
 dump
-push int8(10000000)
+push int8(1000)
 dump
 exit
 ;;

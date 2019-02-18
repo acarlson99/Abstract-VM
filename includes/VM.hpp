@@ -110,7 +110,6 @@ public:
 private:
 	void				readLoop( void );
 	void				evaluateLoop( void );
-	eCommand			lexIn( std::string& );
 	IOperand const		*popUtil( void );
 
 	void				VMpush( Lexer const* );
