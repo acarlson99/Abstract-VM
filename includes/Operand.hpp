@@ -12,10 +12,13 @@ public:
 			long long	n = static_cast<T>(std::stod(this->_string->c_str()));
 			std::cout << "AAAAAAAAAAA" << std::endl;
 			std::cout << (n == this->_value) << std::endl;
-			std::cout << this->_value << std::endl;
-			std::cout << n << std::endl;
-			std::cout << *_string << std::endl;
 			std::cout << "BBBBBBBBBBB" << std::endl;
+			std::cout << this->_value << std::endl;
+			std::cout << "CCCCCCCCCCC" << std::endl;
+			std::cout << n << std::endl;
+			std::cout << "DDDDDDDDDDD" << std::endl;
+			std::cout << *_string << std::endl;
+			std::cout << "EEEEEEEEEEE" << std::endl;
 		}
 
 	Operand(void) : _value(0), _type(Int8), _string(new std::string(std::string(std::to_string(this->_value)))) { }
