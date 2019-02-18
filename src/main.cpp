@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 		machine.run();
 	}
 	catch (std::exception &e) {
-		std::cout << e.what() << std::endl;
+		std::cout << "ERROR: " << e.what() << std::endl;
 		std::exit(1);
 	}
 }

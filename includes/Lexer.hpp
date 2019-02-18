@@ -45,22 +45,24 @@ enum eOperandType {
 class Lexer {
 
 public:
-	Lexer( eCommand , eOperandType , std::string );
-	Lexer( eCommand );
+	Lexer( eCommand , eOperandType , std::string, size_t );
+	Lexer( eCommand, size_t );
 	Lexer( void );
 	Lexer( Lexer const & cp);
 	~Lexer( void );
 	Lexer& operator=( Lexer const &);
 
-	static Lexer		*generateTokens( std::string& );
+	static Lexer		*generateTokens( std::string&, size_t );
 	eCommand			getCommand( void ) const;
 	eOperandType		getType( void ) const;
 	std::string const	&getArg( void ) const;
+	size_t				getLine( void ) const;
 
 private:
 	eCommand		_command;
 	eOperandType	_argType;
 	std::string		*_arg;
+	size_t			_line;
 
 };
 

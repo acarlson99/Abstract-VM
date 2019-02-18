@@ -3,6 +3,7 @@
 
 # include <vector>
 # include <fstream>
+# include <sstream>
 # include "Factory.hpp"
 # include "Lexer.hpp"
 
@@ -43,20 +44,23 @@ public:
 
 	class InvalidFileException : public std::exception {
 	public:
-		InvalidFileException(void);
-		InvalidFileException(InvalidFileException const &cp);
-		~InvalidFileException(void) throw();
-		InvalidFileException &operator=(InvalidFileException const &);
+		InvalidFileException( void );
+		InvalidFileException( InvalidFileException const &cp );
+		~InvalidFileException( void ) throw();
+		InvalidFileException &operator=( InvalidFileException const & );
 		virtual const char *what() const throw();
 	};
 
 	class PopOnEmptyStackException : public std::exception {
 	public:
-		PopOnEmptyStackException(void);
-		PopOnEmptyStackException(PopOnEmptyStackException const &cp);
-		~PopOnEmptyStackException(void) throw();
-		PopOnEmptyStackException &operator=(PopOnEmptyStackException const &);
+		PopOnEmptyStackException( size_t );
+		PopOnEmptyStackException( void );
+		PopOnEmptyStackException( PopOnEmptyStackException const &cp );
+		~PopOnEmptyStackException( void ) throw();
+		PopOnEmptyStackException &operator=( PopOnEmptyStackException const & );
 		virtual const char *what() const throw();
+	private:
+		size_t		_line;
 	};
 
 	class UnexpectedEOFException : public std::exception {
@@ -70,11 +74,14 @@ public:
 
 	class UntrueAssertionException : public std::exception {
 	public:
+		UntrueAssertionException( size_t );
 		UntrueAssertionException( void );
 		UntrueAssertionException( UntrueAssertionException const & cp);
 		~UntrueAssertionException( void ) throw();
 		UntrueAssertionException& operator=( UntrueAssertionException const & e);
 		virtual const char* what() const throw();
+	private:
+		size_t		_line;
 	};
 
 	class NoExitException : public std::exception {
@@ -88,14 +95,17 @@ public:
 
 	class InvalidCommandException : public std::exception {
 	public:
+		InvalidCommandException( size_t );
 		InvalidCommandException( void );
 		InvalidCommandException( InvalidCommandException const & cp);
 		~InvalidCommandException( void ) throw();
 		InvalidCommandException& operator=( InvalidCommandException const & e);
 		virtual const char* what() const throw();
+	private:
+		size_t		_line;
 	};
 
-	void	printCommands();
+	void	printCommands( void );	// TODO: remove
 
 private:
 	void				readLoop( void );
@@ -122,6 +132,7 @@ private:
 	bool								_continueReading;
 	std::string							_filename;
 	Factory								_factory;
+	bool								_eval;
 
 	std::map<eCommand, void (VM::*)(Lexer const*)> _funcs;
 };

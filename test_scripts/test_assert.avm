@@ -1,0 +1,5 @@
+push double(10.0)
+assert double(10.0)
+dump
+;assert int8(10)
+exit

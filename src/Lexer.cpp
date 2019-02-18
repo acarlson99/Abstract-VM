@@ -2,18 +2,18 @@
 
 //             command type    arg
 static std::regex		patterns[] = {
-	std::regex("^push (int8)\\((\\d+)\\) *;?"),
-	std::regex("^push (int16)\\((\\d+)\\) *;?"),
-	std::regex("^push (int32)\\((\\d+)\\) *;?"),
-	std::regex("^push (float)\\((\\d+)\\) *;?"),
-	std::regex("^push (double)\\((\\d+)\\) *;?"),
+	std::regex("^push (int8)\\((-?[0-9]+)\\) *;?"),
+	std::regex("^push (int16)\\((-?[0-9]+)\\) *;?"),
+	std::regex("^push (int32)\\((-?[0-9]+)\\) *;?"),
+	std::regex("^push (float)\\((-?[0-9]+\\.[0-9]+)\\) *;?"),
+	std::regex("^push (double)\\((-?[0-9]+\\.[0-9]+)\\) *;?"),
 	std::regex("^pop *;?"),
 	std::regex("^dump *;?"),
-	std::regex("^assert (int8)\\((\\d+)\\) *;?"),
-	std::regex("^assert (int16)\\((\\d+)\\) *;?"),
-	std::regex("^assert (int32)\\((\\d+)\\) *;?"),
-	std::regex("^assert (float)\\((\\d+)\\) *;?"),
-	std::regex("^assert (double)\\((\\d+)\\) *;?"),
+	std::regex("^assert (int8)\\((-?[0-9]+)\\) *;?"),
+	std::regex("^assert (int16)\\((-?[0-9]+)\\) *;?"),
+	std::regex("^assert (int32)\\((-?[0-9]+)\\) *;?"),
+	std::regex("^assert (float)\\((-?[0-9]+\\.[0-9]+)\\) *;?"),
+	std::regex("^assert (double)\\((-?[0-9]+\\.[0-9]+)\\) *;?"),
 	std::regex("^add *;?"),
 	std::regex("^sub *;?"),
 	std::regex("^mul *;?"),
@@ -27,11 +27,11 @@ static std::regex		patterns[] = {
 
 //	return ((this->*_f.at(type))(value));
 
-Lexer::Lexer( eCommand c, eOperandType o, std::string arg) : _command(c), _argType(o), _arg(new std::string(arg)) { }
+Lexer::Lexer( eCommand c, eOperandType o, std::string arg, size_t line ) : _command(c), _argType(o), _arg(new std::string(arg)), _line(line) { }
 
-Lexer::Lexer( eCommand c ) : Lexer(c, Double, "nan") { }
+Lexer::Lexer( eCommand c, size_t line ) : Lexer(c, Double, "nan", line) { }
 
-Lexer::Lexer( void ) : Lexer(Error, Double, "nan") { }
+Lexer::Lexer( void ) : Lexer(Error, Double, "nan", 0) { }
 
 Lexer::Lexer( Lexer const & cp) { *this = cp; }
 
@@ -66,7 +66,12 @@ std::string const	&Lexer::getArg( void ) const
 	return (*this->_arg);
 }
 
-Lexer		*Lexer::generateTokens( std::string &s )
+size_t				Lexer::getLine( void ) const
+{
+	return (this->_line);
+}
+
+Lexer		*Lexer::generateTokens( std::string &s, size_t line )
 {
 	eCommand		c;
 	std::string		type;
@@ -84,15 +89,13 @@ Lexer		*Lexer::generateTokens( std::string &s )
 		if (std::regex_match(s, m, patterns[i]))
 		{
 			c = static_cast<eCommand>(i);
-			std::cout << c << std::endl;
-			std::cout << m.size() << std::endl;
 			if (m.size() == 3)
 			{
 				type = m[1];
 				arg = m[2];
-				return (new Lexer(c, _strToOp.at(type), arg));
+				return (new Lexer(c, _strToOp.at(type), arg, line));
 			}
-			return (new Lexer(c));
+			return (new Lexer(c, line));
 		}
 	return (new Lexer());
 }

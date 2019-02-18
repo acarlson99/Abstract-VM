@@ -1,0 +1,7 @@
+push int8(42)
+print
+pop
+push int32(42)
+print
+exit
+;;
