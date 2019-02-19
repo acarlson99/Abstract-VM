@@ -48,7 +48,12 @@ class Operand : public IOperand
 					throw OverflowException();
 			}
 		}
-		catch (std::out_of_range &e)
+		catch ( std::out_of_range &e )
+		{
+			delete this->_string;
+			throw TooBigOWOException();
+		}
+		catch ( std::exception &e )
 		{
 			delete this->_string;
 			throw TooBigOWOException();
