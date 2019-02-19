@@ -1,8 +1,9 @@
 #ifndef OPERAND_HPP
-#define OPERAND_HPP
+# define OPERAND_HPP
 
 # include <string>
 # include <sstream>
+# include <iomanip>
 # include <float.h>
 # include <limits.h>
 # include "IOperand.hpp"
@@ -24,54 +25,65 @@ class Operand : public IOperand
 
   public:
 	Operand(std::string const &string, int precision, eOperandType type)
-		: _type(type), _precision(precision)
+		: _type(type), _precision(precision), _string(NULL)
 	{
 		static const size_t size_arr[] = {
 			4,
 			6,
 			11,
 		};
-		long long			n;
-		long double			ldn;
 		std::stringstream	numStr(std::stringstream::out); // TODO: use stringstream to format with precision
 		std::string			tmpStr;
 
 		try
 		{
-		// 	tmpStr = std::string(string);
-		// 	this->_value = static_cast<T>(std::stod(string));
-		// 	if (this->_type <= Int32)
-		// 	{
-		// 		n = std::stol(this->_string->c_str());
-		// 		if (this->isOverflowing<long long>(n, this->_type) || this->_string->length() > size_arr[this->_type])
-		// 			throw OverflowException();
-		// 	}
-		// 	else
-		// 	{
-		// 		ldn = std::stold(this->_string->c_str());
-		// 		if (this->isOverflowing<long double>(ldn, this->_type))
-		// 			throw OverflowException();
-		// 	}
+			if (this->_type <= Int32)
+			{
+				long long n = std::stoll(string);
+				if (this->isOverflowing<long long>(n, this->_type) || string.length() > size_arr[this->_type])
+					throw OverflowException();
+				this->_value = static_cast<T>(n);
+				numStr << std::setprecision(this->_precision) << static_cast<long long>(this->_value);
+				this->_string = new std::string(numStr.str());
+			}
+			else
+			{
+				long double			ldn;
+
+				this->_value = static_cast<T>(std::stod(string));
+				std::cout << "VALUE " << this->_value << std::endl;
+				std::cout << "PRECISION " << this->_precision << std::endl;
+				// numStr << std::setprecision(this->_precision) << this->_value;
+				numStr << this->_value;
+				std::cout << "NUMSTR " << numStr.str() << std::endl;
+				ldn = std::stold(string.c_str());
+				if (this->isOverflowing<long double>(ldn, this->_type))
+					throw OverflowException();
+				this->_string = new std::string(numStr.str());
+			}
 		}
 		catch ( std::out_of_range &e )
 		{
-			// delete this->_string;
+			if (this->_string)
+				delete this->_string;
 			throw TooBigOWOException();
 		}
 		catch ( std::exception &e )
 		{
-			// delete this->_string;
+			if (this->_string)
+				delete this->_string;
 			throw OverflowException();
 		}
 	}
 
-	Operand(void) : _value(0), _type(Int8), _string(new std::string(std::string(std::to_string(this->_value)))) { }
+	Operand(void) : _value(0), _type(Int8), _string(new std::string(std::to_string(this->_value))) { }
 
 	Operand(Operand const &cp) { *this = cp; }
 
 	~Operand(void)
 		{
-			// delete this->_string;
+			// if (this->_string)
+			delete this->_string;
 		}
 
 	Operand &operator=(Operand const &rhs)
@@ -114,6 +126,7 @@ class Operand : public IOperand
 
 	virtual IOperand const *operator+(IOperand const &rhs) const
 		{
+			static_cast<void>(rhs);
 			// eOperandType		type = MAX(this->getType(), rhs.getType());
 			// std::string			newStr;
 			// if (type <= Int32)

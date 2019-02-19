@@ -1,0 +1,8 @@
+push int8(42)
+print
+push int8(120)
+print
+push float(1200.499)
+dump
+exit
+;;

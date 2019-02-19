@@ -202,6 +202,7 @@ void		VM::VMpush( Lexer const *l )
 {
 	std::cout << "PUSHING " << l->getArg() << std::endl;
 	this->_nums.push_back(g_factory.createOperand(l->getType(), l->getArg()));
+	std::cout << "PUSHED " << this->_nums.back()->toString() << std::endl;
 }
 
 void		VM::VMpop( Lexer const* )
