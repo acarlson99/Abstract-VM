@@ -1,19 +1,23 @@
 #ifndef OPERAND_HPP
 #define OPERAND_HPP
 
-#include <string>
-#include <sstream>
-#include <float.h>
-#include <limits.h>
-#include "IOperand.hpp"
-#include "Factory.hpp"
+# include <string>
+# include <sstream>
+# include <float.h>
+# include <limits.h>
+# include "IOperand.hpp"
+# include "Factory.hpp"
 
-#ifndef MAX
-#define MAX(a, b) (a > b ? a : b)
-#endif
+# ifndef MAX
+#  define MAX(a, b) (a > b ? a : b)
+# endif
 
 class Factory;
 
+// convert from string to data type
+// set stringstream precision
+// send int to stream
+// check overflow
 template <typename T>
 class Operand : public IOperand
 {
@@ -27,36 +31,37 @@ class Operand : public IOperand
 			6,
 			11,
 		};
-		long long n;
-		long double ldn;
-		std::stringstream numStr(std::stringstream::out); // TODO: use stringstream to format with precision
+		long long			n;
+		long double			ldn;
+		std::stringstream	numStr(std::stringstream::out); // TODO: use stringstream to format with precision
+		std::string			tmpStr;
 
 		try
 		{
-			this->_string = new std::string(string);
-			this->_value = static_cast<T>(std::stod(string));
-			if (this->_type <= Int32)
-			{
-				n = std::stol(this->_string->c_str());
-				if (this->isOverflowing<long long>(n, this->_type) || this->_string->length() > size_arr[this->_type])
-					throw OverflowException();
-			}
-			else
-			{
-				ldn = std::stold(this->_string->c_str());
-				if (this->isOverflowing<long double>(ldn, this->_type))
-					throw OverflowException();
-			}
+		// 	tmpStr = std::string(string);
+		// 	this->_value = static_cast<T>(std::stod(string));
+		// 	if (this->_type <= Int32)
+		// 	{
+		// 		n = std::stol(this->_string->c_str());
+		// 		if (this->isOverflowing<long long>(n, this->_type) || this->_string->length() > size_arr[this->_type])
+		// 			throw OverflowException();
+		// 	}
+		// 	else
+		// 	{
+		// 		ldn = std::stold(this->_string->c_str());
+		// 		if (this->isOverflowing<long double>(ldn, this->_type))
+		// 			throw OverflowException();
+		// 	}
 		}
 		catch ( std::out_of_range &e )
 		{
-			delete this->_string;
+			// delete this->_string;
 			throw TooBigOWOException();
 		}
 		catch ( std::exception &e )
 		{
-			delete this->_string;
-			throw TooBigOWOException();
+			// delete this->_string;
+			throw OverflowException();
 		}
 	}
 
@@ -109,23 +114,24 @@ class Operand : public IOperand
 
 	virtual IOperand const *operator+(IOperand const &rhs) const
 		{
-			eOperandType		type = MAX(this->getType(), rhs.getType());
-			std::string			newStr;
-			if (type <= Int32)
-			{
-				// long long		a = std::stoll(this->toString());
-				// long long		b = std::stoll(rhs.toString());
-			}
-			else
-			{
-				std::cout << "Float addition.  TODO: DEAL WITH THIS" << std::endl;
-			}
-			IOperand const	*o = g_factory.createOperand(type, newStr);
-			std::cout << o->toString() << std::endl;	// TODO: fix leaks brah
-			// const IOperand		*newOp = Factory::createOperand(type, newStr, 1);
-			// std::cout << newOp->toString() << std::endl;
-			// TODO: create new Operand<type>(string, type)
-			return (o);
+			// eOperandType		type = MAX(this->getType(), rhs.getType());
+			// std::string			newStr;
+			// if (type <= Int32)
+			// {
+			// 	// long long		a = std::stoll(this->toString());
+			// 	// long long		b = std::stoll(rhs.toString());
+			// }
+			// else
+			// {
+			// 	std::cout << "Float addition.  TODO: DEAL WITH THIS" << std::endl;
+			// }
+			// IOperand const	*o = g_factory.createOperand(type, newStr);
+			// std::cout << o->toString() << std::endl;	// TODO: fix leaks brah
+			// // const IOperand		*newOp = Factory::createOperand(type, newStr, 1);
+			// // std::cout << newOp->toString() << std::endl;
+			// // TODO: create new Operand<type>(string, type)
+			// return (o);
+			return (NULL);
 		}
 
 	virtual IOperand const *operator-(IOperand const &rhs) const
