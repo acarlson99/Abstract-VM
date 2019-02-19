@@ -1,55 +1,59 @@
 #ifndef OPERAND_HPP
-# define OPERAND_HPP
+#define OPERAND_HPP
 
-# include <string>
-# include <sstream>
-# include <float.h>
-# include <limits.h>
-# include "IOperand.hpp"
-# include "Factory.hpp"
+#include <string>
+#include <sstream>
+#include <float.h>
+#include <limits.h>
+#include "IOperand.hpp"
+#include "Factory.hpp"
 
 #ifndef MAX
-# define MAX(a,b) (a > b ? a : b)
+#define MAX(a, b) (a > b ? a : b)
 #endif
 
 class Factory;
 
 template <typename T>
-class Operand : public IOperand {
+class Operand : public IOperand
+{
 
-public:
+  public:
 	Operand(std::string const &string, int precision, eOperandType type)
 		: _type(type), _precision(precision)
-		{
-			static const size_t size_arr[] = {
-				4,
-				6,
-				11,
-			};
-			long long		n;
-			long double		ldn;
-			std::stringstream		numStr(std::stringstream::out);	// TODO: use stringstream to format with precision
+	{
+		static const size_t size_arr[] = {
+			4,
+			6,
+			11,
+		};
+		long long n;
+		long double ldn;
+		std::stringstream numStr(std::stringstream::out); // TODO: use stringstream to format with precision
 
-			try {
-				this->_value = static_cast<T>(std::stod(string));
-				if (this->_type <= Int32)
-				{
-					n = std::stol(this->_string->c_str());
-					if (this->isOverflowing<long long>(n, this->_type) || this->_string->length() > size_arr[this->_type])
-						throw OverflowException();
-				}
-				else
-				{
-					ldn = std::stold(this->_string->c_str());
-					if (this->isOverflowing<long double>(ldn, this->_type))
-						throw OverflowException();
-				}
+		try
+		{
+			this->_string = new std::string(string);
+			this->_value = static_cast<T>(std::stod(string));
+			if (this->_type <= Int32)
+			{
+				n = std::stol(this->_string->c_str());
+				if (this->isOverflowing<long long>(n, this->_type) || this->_string->length() > size_arr[this->_type])
+					throw OverflowException();
 			}
-			catch ( std::out_of_range &e ) {
-				delete this->_string;
-				throw TooBigOWOException();
+			else
+			{
+				ldn = std::stold(this->_string->c_str());
+				if (this->isOverflowing<long double>(ldn, this->_type))
+					throw OverflowException();
 			}
 		}
+		catch (std::out_of_range &e)
+		{
+			delete this->_string;
+			throw TooBigOWOException();
+		}
+	}
 
 	Operand(void) : _value(0), _type(Int8), _string(new std::string(std::string(std::to_string(this->_value)))) { }
 
