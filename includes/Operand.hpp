@@ -71,7 +71,7 @@ class Operand : public IOperand
 
 	~Operand(void)
 		{
-			delete this->_string;
+			// delete this->_string;
 		}
 
 	Operand &operator=(Operand const &rhs)
