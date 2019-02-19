@@ -1,5 +1,6 @@
 #include "VM.hpp"
-#include <float.h>
+
+Factory		g_factory = Factory();
 
 int main(int argc, char **argv)
 {

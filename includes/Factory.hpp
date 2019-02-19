@@ -2,7 +2,19 @@
 #define FACTORY_HPP
 
 #include <map>
-#include "Operand.hpp"
+
+# ifndef OPTYPE
+#  define OPTYPE
+enum eOperandType {
+	Int8,
+	Int16,
+	Int32,
+	Float,
+	Double,
+};
+#endif
+
+class IOperand;
 
 class Factory {
 
@@ -24,5 +36,7 @@ private:
 
 	std::map<eOperandType, IOperand const *(Factory::*)(std::string const &)const> _f;
 };
+
+extern Factory g_factory;
 
 #endif

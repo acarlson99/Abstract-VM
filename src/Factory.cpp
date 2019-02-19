@@ -1,3 +1,4 @@
+#include "Operand.hpp"
 #include "Factory.hpp"
 
 Factory::Factory(void)

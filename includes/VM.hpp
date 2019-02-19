@@ -5,6 +5,7 @@
 # include <fstream>
 # include <sstream>
 # include "Factory.hpp"
+# include "Operand.hpp"
 # include "Lexer.hpp"
 
 /*

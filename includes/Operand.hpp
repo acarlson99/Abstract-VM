@@ -1,8 +1,8 @@
 #ifndef OPERAND_HPP
 # define OPERAND_HPP
 
-# include "Factory.hpp"
 # include "IOperand.hpp"
+# include "Factory.hpp"
 
 #ifndef MAX
 # define MAX(a,b) (a > b ? a : b)
@@ -94,6 +94,8 @@ public:
 			std::string			newStr = "42";
 			std::cout << "type = " << type << std::endl;
 			std::cout << "+ operator called on " << this->toString() << " and " << rhs.toString() << std::endl;
+			IOperand const	*o = g_factory.createOperand(type, newStr);
+			std::cout << o->toString() << std::endl;
 			// const IOperand		*newOp = Factory::createOperand(type, newStr, 1);
 			// std::cout << newOp->toString() << std::endl;
 			// TODO: create new Operand<type>(string, type)
