@@ -13,6 +13,11 @@ Factory::Factory(Factory const &cp) { *this = cp; }
 Factory::~Factory(void) {}
 Factory &Factory::operator=(Factory const &) { return *this; }
 
+// static IOperand const *Factory::createOperand(eOperandType type, std::string const &value, int)
+// {
+// return ((this->*_f.at(type))(value));
+// }
+
 IOperand const *Factory::createOperand(eOperandType type, std::string const &value) const
 {
 /*

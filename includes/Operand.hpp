@@ -4,6 +4,10 @@
 # include "Factory.hpp"
 # include "IOperand.hpp"
 
+#ifndef MAX
+# define MAX(a,b) (a > b ? a : b)
+#endif
+
 class Factory;
 
 template <typename T>
@@ -86,7 +90,13 @@ public:
 
 	virtual IOperand const *operator+(IOperand const &rhs) const
 		{
+			eOperandType		type = MAX(this->getType(), rhs.getType());
+			std::string			newStr = "42";
+			std::cout << "type = " << type << std::endl;
 			std::cout << "+ operator called on " << this->toString() << " and " << rhs.toString() << std::endl;
+			// const IOperand		*newOp = Factory::createOperand(type, newStr, 1);
+			// std::cout << newOp->toString() << std::endl;
+			// TODO: create new Operand<type>(string, type)
 			return (NULL);
 		}
 
@@ -160,10 +170,9 @@ public:
 	};
 
 private:
-	T				_value;
-	eOperandType	_type;
-	std::string		*_string;
-	Factory			*_factory;
+	T						_value;
+	eOperandType			_type;
+	std::string				*_string;
 
 };
 

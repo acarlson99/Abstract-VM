@@ -244,7 +244,8 @@ void		VM::VMadd( Lexer const *l )
 		b = this->popUtil();
 
 		IOperand const	*r = *a + *b;
-		std::cout << r->getType() << " " << " " << r->getPrecision() << " " << r->toString() << std::endl;
+		std::cout << r->getType() << " " << r->getPrecision() << " " << r->toString() << std::endl;
+		// TODO: push that bad boy to the stack ;)
 	}
 	catch ( std::exception &e ) {
 		if (a)
