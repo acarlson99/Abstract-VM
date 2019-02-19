@@ -2,29 +2,51 @@
 #define OPERAND_HPP
 
 #include "IOperand.hpp"
-#include <iomanip>	// TODO: this can go
 
 template <typename T>
 class Operand : public IOperand {
 
 public:
 	Operand(std::string const &string, eOperandType type)
-		: _value(static_cast<T>(std::stod(string))), _type(type), _string(new std::string(string))
+		: _type(type), _string(new std::string(string))
 		{
 			static const size_t size_arr[] = {
 				4,
 				6,
 				11,
 			};
-			long long		n = std::stol(this->_string->c_str());
+			long long		n;
+			long double		ldn;
 
-			std::cout << n << std::endl;
-			// long double ldn = std::stold(this->_string->c_str());	// TODO: compare only integer part of doubles
-			std::cout << static_cast<int32_t>(this->_value) << std::endl;
-			if (this->_type < Int32 && (this->_value != n || this->_string->length() > size_arr[this->_type]))
-			{
-				std::cout << static_cast<int32_t>(this->_value) << " != " << n << std::endl;
-				std::cout << this->_string->length() << " > " << size_arr[this->_type] << std::endl;
+			try {
+				this->_value = static_cast<T>(std::stod(string));
+				if (this->_type <= Int32)
+				{
+					try {
+						n = std::stol(this->_string->c_str());
+					}
+					catch ( std::exception &e ) {
+						throw OverflowException();
+					}
+					if (this->_value != n || this->_string->length() > size_arr[this->_type])
+						throw OverflowException();
+				}
+				else
+				{
+					try {
+						ldn = std::stold(this->_string->c_str());
+					}
+					catch ( std::exception &e ) {
+						throw OverflowException();
+					}
+					if (this->_value != ldn)
+						throw OverflowException();
+				}
+			}
+			catch ( std::out_of_range &e ) {
+				throw TooBigOWOException();
+			}
+			catch ( std::exception &e ) {
 				throw OverflowException();
 			}
 		}
@@ -122,6 +144,15 @@ public:
 		~DivisionByZeroException( void ) throw() { }
 		DivisionByZeroException &operator=( DivisionByZeroException const & ) { return *this; }
 		virtual const char *what() const throw() { return ("DivisionByZero"); }
+	};
+
+	class TooBigOWOException : public std::exception {
+	public:
+		TooBigOWOException( void ) { }
+		TooBigOWOException( TooBigOWOException const & cp) { *this = cp; }
+		~TooBigOWOException( void ) throw() { }
+		TooBigOWOException& operator=( TooBigOWOException const & ) { return *this; }
+		virtual const char* what() const throw() { return ("OwO it's too on"); }
 	};
 
 private:

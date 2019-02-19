@@ -10,7 +10,6 @@ int main(int argc, char **argv)
 	if (argc > 1)
 		machine = VM(argv[1]);
 
-	std::cout << DBL_MAX << std::endl;
 	try {
 		machine.run();
 	}
