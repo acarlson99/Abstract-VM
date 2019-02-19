@@ -1,6 +1,10 @@
 #ifndef OPERAND_HPP
 # define OPERAND_HPP
 
+# include <string>
+# include <sstream>
+# include <float.h>
+# include <limits.h>
 # include "IOperand.hpp"
 # include "Factory.hpp"
 
@@ -14,8 +18,8 @@ template <typename T>
 class Operand : public IOperand {
 
 public:
-	Operand(std::string const &string, eOperandType type)
-		: _type(type), _string(new std::string(string))
+	Operand(std::string const &string, int precision, eOperandType type)
+		: _type(type), _precision(precision)
 		{
 			static const size_t size_arr[] = {
 				4,
@@ -24,39 +28,26 @@ public:
 			};
 			long long		n;
 			long double		ldn;
+			std::stringstream		numStr(std::stringstream::out);	// TODO: use stringstream to format with precision
 
 			try {
 				this->_value = static_cast<T>(std::stod(string));
 				if (this->_type <= Int32)
 				{
-					try {
-						n = std::stol(this->_string->c_str());
-					}
-					catch ( std::exception &e ) {
-						throw OverflowException();
-					}
-					if (this->_value != n || this->_string->length() > size_arr[this->_type])
+					n = std::stol(this->_string->c_str());
+					if (this->isOverflowing<long long>(n, this->_type) || this->_string->length() > size_arr[this->_type])
 						throw OverflowException();
 				}
 				else
 				{
-					try {
-						ldn = std::stold(this->_string->c_str());
-					}
-					catch ( std::exception &e ) {
-						throw OverflowException();
-					}
-					if (this->_value != ldn)
+					ldn = std::stold(this->_string->c_str());
+					if (this->isOverflowing<long double>(ldn, this->_type))
 						throw OverflowException();
 				}
 			}
 			catch ( std::out_of_range &e ) {
 				delete this->_string;
 				throw TooBigOWOException();
-			}
-			catch ( std::exception &e ) {
-				delete this->_string;
-				throw OverflowException();
 			}
 		}
 
@@ -78,9 +69,28 @@ public:
 			return *this;
 		}
 
+	template <typename U>
+	bool						isOverflowing(U r, eOperandType type) const
+		{
+			switch (type)
+			{
+			case (Int8):
+				return (r > SCHAR_MAX || r < SCHAR_MIN);
+			case (Int16):
+				return (r > SHRT_MAX || r < SHRT_MIN);
+			case (Int32):
+				return (r > INT_MAX || r < INT_MIN);
+			case (Float):
+				return (r > FLT_MAX || r < FLT_MIN);
+			case (Double):
+				return (r > DBL_MAX || r < DBL_MIN);
+			}
+			return (true);
+		}
+
 	virtual int					getPrecision(void) const
 		{
-			return (sizeof(_value));
+			return (this->_precision);
 		}
 
 	virtual eOperandType		getType(void) const
@@ -91,15 +101,22 @@ public:
 	virtual IOperand const *operator+(IOperand const &rhs) const
 		{
 			eOperandType		type = MAX(this->getType(), rhs.getType());
-			std::string			newStr = "42";
-			std::cout << "type = " << type << std::endl;
-			std::cout << "+ operator called on " << this->toString() << " and " << rhs.toString() << std::endl;
+			std::string			newStr;
+			if (type <= Int32)
+			{
+				// long long		a = std::stoll(this->toString());
+				// long long		b = std::stoll(rhs.toString());
+			}
+			else
+			{
+				std::cout << "Float addition.  TODO: DEAL WITH THIS" << std::endl;
+			}
 			IOperand const	*o = g_factory.createOperand(type, newStr);
-			std::cout << o->toString() << std::endl;
+			std::cout << o->toString() << std::endl;	// TODO: fix leaks brah
 			// const IOperand		*newOp = Factory::createOperand(type, newStr, 1);
 			// std::cout << newOp->toString() << std::endl;
 			// TODO: create new Operand<type>(string, type)
-			return (NULL);
+			return (o);
 		}
 
 	virtual IOperand const *operator-(IOperand const &rhs) const
@@ -174,6 +191,7 @@ public:
 private:
 	T						_value;
 	eOperandType			_type;
+	int						_precision;
 	std::string				*_string;
 
 };

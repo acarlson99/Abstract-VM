@@ -12,7 +12,7 @@ enum eOperandType {
 	Float,
 	Double,
 };
-#endif
+# endif
 
 class IOperand;
 

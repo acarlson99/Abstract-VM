@@ -58,9 +58,11 @@ VM::VM( VM const &cp ) { *this = cp; }
 
 VM::~VM( void )
 {
-	for (auto it = this->_nums.begin(); it != this->_nums.end(); it++)
+	std::cout << "Destructor called" << std::endl;
+	for (auto it : this->_nums)
 	{
-		delete *it;
+		std::cout << "DELETING " << it << std::endl;
+		delete it;
 	}
 }
 
@@ -72,7 +74,7 @@ VM &VM::operator=(VM const &rhs)
 			delete *it;
 		this->_nums.clear();
 		for (auto it = rhs._nums.begin(); it != rhs._nums.end(); it++)
-			this->_nums.push_back(this->_factory.createOperand((*it)->getType(), (*it)->toString()));
+			this->_nums.push_back(g_factory.createOperand((*it)->getType(), (*it)->toString()));
 		for (auto it = this->_commands.begin(); it != this->_commands.end(); it++)
 			delete *it;
 		this->_commands.clear();
@@ -173,6 +175,8 @@ void		VM::evaluateLoop( void )
 		// std::cout << *it << std::endl;	// TODO: delet this
 		try {
 			(this->*_funcs.at(it->getCommand()))(it);
+			for (auto it : this->_nums)
+				std::cout << "STACK " << it->toString() << std::endl;
 		}
 		catch ( std::exception &e ) {
 			std::cout << e.what() << " line " << it->getLine() << std::endl;
@@ -196,7 +200,8 @@ IOperand const		*VM::popUtil( void )
 
 void		VM::VMpush( Lexer const *l )
 {
-	this->_nums.push_back(this->_factory.createOperand(l->getType(), l->getArg()));
+	std::cout << "PUSHING " << l->getArg() << std::endl;
+	this->_nums.push_back(g_factory.createOperand(l->getType(), l->getArg()));
 }
 
 void		VM::VMpop( Lexer const* )
@@ -210,7 +215,7 @@ void		VM::VMpop( Lexer const* )
 //	}
 }
 
-void		VM::VMdump( Lexer const* )
+void		VM::VMdump( Lexer const* )	// TODO: use std::setprecision and stuff
 {
 	for (auto it : this->_nums)
 		std::cout << it->toString() << std::endl;
@@ -221,7 +226,7 @@ void		VM::VMassert( Lexer const *l )
 	if (!this->_nums.size())
 		throw PopOnEmptyStackException();
 	IOperand	const *op = this->_nums.back();
-	IOperand	const *cmp = this->_factory.createOperand(l->getType(), l->getArg());
+	IOperand	const *cmp = g_factory.createOperand(l->getType(), l->getArg());
 
 	if (op->getType() == cmp->getType() && op->toString() == cmp->toString())
 	{
@@ -232,12 +237,10 @@ void		VM::VMassert( Lexer const *l )
 	throw UntrueAssertionException();
 }
 
-void		VM::VMadd( Lexer const *l )
+void		VM::VMadd( Lexer const *l )	// TODO: finish
 {
 	IOperand const		*a = NULL;
 	IOperand const		*b = NULL;
-
-	std::cout << "add called" << std::endl;
 
 	try {
 		a = this->popUtil();
@@ -245,7 +248,13 @@ void		VM::VMadd( Lexer const *l )
 
 		IOperand const	*r = *a + *b;
 		std::cout << r->getType() << " " << r->getPrecision() << " " << r->toString() << std::endl;
-		// TODO: push that bad boy to the stack ;)
+		// delete r;
+		std::cout << "Pushing " << r->toString() << " to stack: line " << __LINE__ << std::endl;
+		this->_nums.push_back(r);
+		delete a;
+		a = NULL;
+		delete b;
+		b = NULL;
 	}
 	catch ( std::exception &e ) {
 		if (a)

@@ -21,7 +21,7 @@ static std::regex		patterns[] = {
 	std::regex("^mod[ \t]*;?.*"),
 	std::regex("^print[ \t]*;?.*"),
 	std::regex("^exit[ \t]*;?.*"),
-	std::regex("^;;[ \t]*;?.*"),
+	std::regex("^;;[ \t]*(?:;.*)?"),
 	std::regex("^[ \t]*(?:;.*)?"),
 };
 

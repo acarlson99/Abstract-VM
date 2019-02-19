@@ -131,7 +131,6 @@ private:
 	bool								_readFromFile;
 	bool								_continueReading;
 	std::string							_filename;
-	Factory								_factory;
 	bool								_eval;
 
 	std::map<eCommand, void (VM::*)(Lexer const*)> _funcs;
