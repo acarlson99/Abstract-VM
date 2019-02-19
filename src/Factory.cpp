@@ -15,6 +15,20 @@ Factory &Factory::operator=(Factory const &) { return *this; }
 
 IOperand const *Factory::createOperand(eOperandType type, std::string const &value) const
 {
+/*
+**	IOperand const		*op;
+**
+**	try {
+**		op = (this->*_f.at(type))(value);
+**	}
+**	catch ( std::exception &e ) {
+**		std::cout << e.what() << std::endl;
+**		delete op;
+**		std::exit(1);
+**	}
+**	return (op);
+**
+*/
 	return ((this->*_f.at(type))(value));
 }
 

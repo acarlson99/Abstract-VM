@@ -1,0 +1,10 @@
+push int8(120)
+print
+push int8(42)
+print
+pop
+pop
+push int32(10)
+print
+exit
+;;

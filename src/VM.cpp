@@ -139,7 +139,7 @@ void		VM::readLoop( void )
 			if (l->getCommand() == Error)
 			{
 				this->_eval = false;
-				throw InvalidCommandException(line);
+				throw InvalidCommandException();
 			}
 			else if (l->getCommand() == Eof)
 				this->_continueReading = false;
@@ -176,6 +176,7 @@ void		VM::evaluateLoop( void )
 		}
 		catch ( std::exception &e ) {
 			std::cout << e.what() << " line " << it->getLine() << std::endl;
+			std::exit(1);
 		}
 		delete it;
 	}
@@ -195,24 +196,18 @@ IOperand const		*VM::popUtil( void )
 
 void		VM::VMpush( Lexer const *l )
 {
-	try {
-		this->_nums.push_back(this->_factory.createOperand(l->getType(), l->getArg()));
-	}
-	catch ( std::exception &e ) {
-		std::cout << e.what() << " line " << l->getLine() << std::endl;
-		std::exit(1);
-	}
+	this->_nums.push_back(this->_factory.createOperand(l->getType(), l->getArg()));
 }
 
-void		VM::VMpop( Lexer const *l )
+void		VM::VMpop( Lexer const* )
 {
-	try {
+//	try {
 		delete this->popUtil();
-	}
-	catch ( std::exception &e ) {
-		std::cout << e.what() << " line " << l->getLine() << std::endl;
-		std::exit(1);
-	}
+//	}
+//	catch ( std::exception &e ) {
+		//	std::cout << e.what() << " line " << l->getLine() << std::endl;
+		//	std::exit(1);
+//	}
 }
 
 void		VM::VMdump( Lexer const* )
@@ -234,7 +229,7 @@ void		VM::VMassert( Lexer const *l )
 		return ;
 	}
 	delete cmp;
-	throw UntrueAssertionException(l->getLine());
+	throw UntrueAssertionException();
 }
 
 void		VM::VMadd( Lexer const *l )
@@ -257,6 +252,7 @@ void		VM::VMadd( Lexer const *l )
 		if (b)
 			delete b;
 		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::exit(1);
 	}
 }
 
@@ -281,13 +277,13 @@ void		VM::VMmod( Lexer const* )
 	std::cout << "mod called" << std::endl;
 }
 
-void		VM::VMprint( Lexer const *l )
+void		VM::VMprint( Lexer const* )
 {
 	if (!this->_nums.size())
 		throw PopOnEmptyStackException();
 	IOperand	const *op = this->_nums.back();
 	if (op->getType() != Int8)
-		throw UntrueAssertionException(l->getLine());
+		throw UntrueAssertionException();
 	std::cout << static_cast<char>(std::stoi(op->toString())) << std::endl;
 }
 
@@ -309,18 +305,11 @@ const char* VM::InvalidFileException::what( void ) const throw() {
 	return "InvalidFile";
 }
 
-VM::PopOnEmptyStackException::PopOnEmptyStackException( size_t line ) : _line(line) { }
-VM::PopOnEmptyStackException::PopOnEmptyStackException( void ) : _line(0) { }
+VM::PopOnEmptyStackException::PopOnEmptyStackException( void ) { }
 VM::PopOnEmptyStackException::PopOnEmptyStackException( PopOnEmptyStackException const & cp) { *this = cp; }
 VM::PopOnEmptyStackException::~PopOnEmptyStackException( void ) throw() { }
-VM::PopOnEmptyStackException& VM::PopOnEmptyStackException::operator=( PopOnEmptyStackException const &rhs)
-{ this->_line = rhs._line; return *this; }
+VM::PopOnEmptyStackException& VM::PopOnEmptyStackException::operator=( PopOnEmptyStackException const& ) { return *this; }
 const char* VM::PopOnEmptyStackException::what( void ) const throw() {
-	if (this->_line)
-	{
-		std::cout << "PopOnEmptyStack line " << this->_line;	// TODO: holy tits remove this
-		return "";
-	}
 	return "PopOnEmptyStack";
 }
 
@@ -332,18 +321,11 @@ const char* VM::UnexpectedEOFException::what( void ) const throw() {
 	return "UnexpectedEOF";
 }
 
-VM::UntrueAssertionException::UntrueAssertionException( size_t line ) : _line(line) { }
-VM::UntrueAssertionException::UntrueAssertionException( void ) : _line(0) { }
+VM::UntrueAssertionException::UntrueAssertionException( void ) { }
 VM::UntrueAssertionException::UntrueAssertionException( UntrueAssertionException const & cp) { *this = cp; }
 VM::UntrueAssertionException::~UntrueAssertionException( void ) throw() { }
-VM::UntrueAssertionException& VM::UntrueAssertionException::operator=( UntrueAssertionException const &rhs)
-{ this->_line = rhs._line; return *this; }
+VM::UntrueAssertionException& VM::UntrueAssertionException::operator=( UntrueAssertionException const& ) { return *this; }
 const char* VM::UntrueAssertionException::what( void ) const throw() {
-	if (this->_line)
-	{
-		std::cout << "UntrueAssertion line " << this->_line;	// TODO: remove
-		return "";
-	}
 	return "UntrueAssertion";
 }
 
@@ -355,17 +337,10 @@ const char* VM::NoExitException::what( void ) const throw() {
 	return "NoExit";
 }
 
-VM::InvalidCommandException::InvalidCommandException( size_t line ) : _line(line) { }
-VM::InvalidCommandException::InvalidCommandException( void ) : _line(0) { }
+VM::InvalidCommandException::InvalidCommandException( void ) { }
 VM::InvalidCommandException::InvalidCommandException( InvalidCommandException const & cp) { *this = cp; }
 VM::InvalidCommandException::~InvalidCommandException( void ) throw() { }
-VM::InvalidCommandException& VM::InvalidCommandException::operator=( InvalidCommandException const &rhs)
-{ this->_line = rhs._line; return *this; }
+VM::InvalidCommandException& VM::InvalidCommandException::operator=( InvalidCommandException const& ) { return *this; }
 const char* VM::InvalidCommandException::what( void ) const throw() {
-	if (this->_line)
-	{
-		std::cout << "InvalidCommand line " << this->_line;	// TODO: KILLLLLLLLLLL
-		return "";
-	}
 	return "InvalidCommand";
 }

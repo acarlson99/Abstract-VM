@@ -1,7 +1,10 @@
 #ifndef OPERAND_HPP
-#define OPERAND_HPP
+# define OPERAND_HPP
 
-#include "IOperand.hpp"
+# include "Factory.hpp"
+# include "IOperand.hpp"
+
+class Factory;
 
 template <typename T>
 class Operand : public IOperand {
@@ -44,9 +47,11 @@ public:
 				}
 			}
 			catch ( std::out_of_range &e ) {
+				delete this->_string;
 				throw TooBigOWOException();
 			}
 			catch ( std::exception &e ) {
+				delete this->_string;
 				throw OverflowException();
 			}
 		}
@@ -82,7 +87,6 @@ public:
 	virtual IOperand const *operator+(IOperand const &rhs) const
 		{
 			std::cout << "+ operator called on " << this->toString() << " and " << rhs.toString() << std::endl;
-
 			return (NULL);
 		}
 
@@ -152,13 +156,15 @@ public:
 		TooBigOWOException( TooBigOWOException const & cp) { *this = cp; }
 		~TooBigOWOException( void ) throw() { }
 		TooBigOWOException& operator=( TooBigOWOException const & ) { return *this; }
-		virtual const char* what() const throw() { return ("OwO it's too on"); }
+		virtual const char* what() const throw() { return ("OwO it's too big on"); }
 	};
 
 private:
-	T _value;
-	eOperandType _type;
-	std::string *_string;
+	T				_value;
+	eOperandType	_type;
+	std::string		*_string;
+	Factory			*_factory;
+
 };
 
 #endif

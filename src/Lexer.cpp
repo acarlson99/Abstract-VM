@@ -22,7 +22,7 @@ static std::regex		patterns[] = {
 	std::regex("^print[ \t]*;?.*"),
 	std::regex("^exit[ \t]*;?.*"),
 	std::regex("^;;[ \t]*;?.*"),
-	std::regex("^[ \t]*(?:;.*)?.*"),
+	std::regex("^[ \t]*(?:;.*)?"),
 };
 
 //	return ((this->*_f.at(type))(value));
