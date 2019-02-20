@@ -24,7 +24,6 @@ public:
 	~Factory(void);
 	Factory &operator=(Factory const &);
 
-	// static IOperand const *createOperand(eOperandType type, std::string const &value, int);
 	IOperand const *createOperand(eOperandType type, std::string const &value) const;
 
 private:

@@ -25,8 +25,6 @@ static std::regex		patterns[] = {
 	std::regex("^[ \t]*(?:;.*)?"),
 };
 
-//	return ((this->*_f.at(type))(value));
-
 Lexer::Lexer( eCommand c, eOperandType o, std::string arg, size_t line ) : _command(c), _argType(o), _arg(new std::string(arg)), _line(line) { }
 
 Lexer::Lexer( eCommand c, size_t line ) : Lexer(c, Double, "nan", line) { }
@@ -46,7 +44,8 @@ Lexer& Lexer::operator=( Lexer const &rhs)
 	{
 		this->_command = rhs._command;
 		this->_argType = rhs._argType;
-		this->_arg = rhs._arg;
+		delete this->_arg;
+		this->_arg = new std::string(rhs._arg->c_str());
 	}
 	return *this;
 }
