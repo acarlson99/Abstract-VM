@@ -155,7 +155,7 @@ void		VM::readLoop( void )
 		}
 		catch ( std::exception &e ) {
 			this->_eval = false;
-			std::cout << e.what() << std::endl;
+			std::cout << e.what() << " line " << line << std::endl;
 		}
 		if (!pushed)
 			delete l;
@@ -174,9 +174,10 @@ void		VM::evaluateLoop( void )
 	{
 		// std::cout << *it << std::endl;	// TODO: delet this
 		try {
+			// feenableexcept(FE_ALL_EXCEPT);	// TODO: fuck with this
 			(this->*_funcs.at(it->getCommand()))(it);
-			for (auto it : this->_nums)
-				std::cout << "STACK " << it->toString() << std::endl;
+			// for (auto it : this->_nums)
+				// 	std::cout << "STACK " << it->toString() << std::endl;
 		}
 		catch ( std::exception &e ) {
 			std::cout << e.what() << " line " << it->getLine() << std::endl;
@@ -200,9 +201,9 @@ IOperand const		*VM::popUtil( void )
 
 void		VM::VMpush( Lexer const *l )
 {
-	std::cout << "PUSHING " << l->getArg() << std::endl;
+	// std::cout << "PUSHING " << l->getArg() << std::endl;
 	this->_nums.push_back(g_factory.createOperand(l->getType(), l->getArg()));
-	std::cout << "PUSHED " << this->_nums.back()->toString() << std::endl;
+	// std::cout << "PUSHED " << this->_nums.back()->toString() << std::endl;
 }
 
 void		VM::VMpop( Lexer const* )
@@ -248,9 +249,9 @@ void		VM::VMadd( Lexer const *l )	// TODO: finish
 		b = this->popUtil();
 
 		IOperand const	*r = *a + *b;
-		std::cout << r->getType() << " " << r->getPrecision() << " " << r->toString() << std::endl;
+		// std::cout << r->getType() << " " << r->getPrecision() << " " << r->toString() << std::endl;
 		// delete r;
-		std::cout << "Pushing " << r->toString() << " to stack: line " << __LINE__ << std::endl;
+		// std::cout << "Pushing " << r->toString() << " to stack: line " << __LINE__ << std::endl;
 		this->_nums.push_back(r);
 		delete a;
 		a = NULL;
@@ -267,25 +268,113 @@ void		VM::VMadd( Lexer const *l )	// TODO: finish
 	}
 }
 
-void		VM::VMsub( Lexer const* )
+void		VM::VMsub( Lexer const *l )
 {
 	std::cout << "sub called" << std::endl;
+	IOperand const		*a = NULL;
+	IOperand const		*b = NULL;
+
+	try {
+		b = this->popUtil();
+		a = this->popUtil();
+
+		IOperand const	*r = *a - *b;
+		this->_nums.push_back(r);
+		delete a;
+		a = NULL;
+		delete b;
+		b = NULL;
+	}
+	catch ( std::exception &e ) {
+		if (a)
+			delete a;
+		if (b)
+			delete b;
+		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::exit(1);
+	}
 }
 
-void		VM::VMmul( Lexer const* )
+void		VM::VMmul( Lexer const *l )
 {
 	std::cout << "mul called" << std::endl;
+	IOperand const		*a = NULL;
+	IOperand const		*b = NULL;
+
+	try {
+		b = this->popUtil();
+		a = this->popUtil();
+
+		IOperand const	*r = *a * *b;
+		this->_nums.push_back(r);
+		delete a;
+		a = NULL;
+		delete b;
+		b = NULL;
+	}
+	catch ( std::exception &e ) {
+		if (a)
+			delete a;
+		if (b)
+			delete b;
+		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::exit(1);
+	}
 }
 
-void		VM::VMdiv( Lexer const* )
+void		VM::VMdiv( Lexer const *l )	// TODO: check div by 0
 {
 	std::cout << "div called" << std::endl;
+	IOperand const		*a = NULL;
+	IOperand const		*b = NULL;
+
+	try {
+		b = this->popUtil();
+		a = this->popUtil();
+
+		IOperand const	*r = *a / *b;
+		this->_nums.push_back(r);
+		delete a;
+		a = NULL;
+		delete b;
+		b = NULL;
+	}
+	catch ( std::exception &e ) {
+		if (a)
+			delete a;
+		if (b)
+			delete b;
+		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::exit(1);
+	}
 }
 
-void		VM::VMmod( Lexer const* )
+void		VM::VMmod( Lexer const *l )	// TODO: check mod by 0
 {
 	// try a % b and print exception with l->line
 	std::cout << "mod called" << std::endl;
+	IOperand const		*a = NULL;
+	IOperand const		*b = NULL;
+
+	try {
+		b = this->popUtil();
+		a = this->popUtil();
+
+		IOperand const	*r = *a % *b;
+		this->_nums.push_back(r);
+		delete a;
+		a = NULL;
+		delete b;
+		b = NULL;
+	}
+	catch ( std::exception &e ) {
+		if (a)
+			delete a;
+		if (b)
+			delete b;
+		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::exit(1);
+	}
 }
 
 void		VM::VMprint( Lexer const* )

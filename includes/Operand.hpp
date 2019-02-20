@@ -6,6 +6,7 @@
 # include <iomanip>
 # include <float.h>
 # include <limits.h>
+// #include <fenv.h>
 # include "IOperand.hpp"
 # include "Factory.hpp"
 
@@ -32,27 +33,50 @@ class Operand : public IOperand
 			6,
 			11,
 		};
-		std::stringstream	numStr(std::stringstream::out); // TODO: use stringstream to format with precision
-		std::string			tmpStr;
+		// std::stringstream	numStr(std::stringstream::out); // TODO: use stringstream to format with precision
+		// std::string			tmpStr;
 
 		try
 		{
 			if (this->_type <= Int32)
 			{
+				long long n;
+				n = std::stoll(string);
+				if (this->isOverflowing<long long>(n, this->_type) || string.length() > size_arr[this->_type])
+					throw OverflowException();
+				this->_value = static_cast<T>(n);
+				this->_string = new std::string(std::to_string(this->_value));
+
+				/*
 				long long n = std::stoll(string);
 				if (this->isOverflowing<long long>(n, this->_type) || string.length() > size_arr[this->_type])
 					throw OverflowException();
 				this->_value = static_cast<T>(n);
 				numStr << std::setprecision(this->_precision) << static_cast<long long>(this->_value);
 				this->_string = new std::string(numStr.str());
+				*/
 			}
 			else
 			{
-				long double			ldn;
+				long double			n;
 
+				n = std::stold(string);
+				if (this->isOverflowing<long double>(n, this->_type))
+				{
+					std::cout << "OVERFLOW OH FUCK" << std::endl;
+					std::cout << n << " is overflowing" << std::endl;
+					std::cout << FLT_MIN << " > " << n << std::endl;
+					throw OverflowException();
+				}
+				this->_value = static_cast<T>(n);
+				this->_string = new std::string(std::to_string(this->_value));
+
+				/*
 				this->_value = static_cast<T>(std::stod(string));
 				std::cout << "VALUE " << this->_value << std::endl;
+				std::cout << this->_value << std::endl;
 				std::cout << "PRECISION " << this->_precision << std::endl;
+				std::cout << std::setprecision(this->_precision) << this->_value << std::endl;
 				// numStr << std::setprecision(this->_precision) << this->_value;
 				numStr << this->_value;
 				std::cout << "NUMSTR " << numStr.str() << std::endl;
@@ -60,6 +84,7 @@ class Operand : public IOperand
 				if (this->isOverflowing<long double>(ldn, this->_type))
 					throw OverflowException();
 				this->_string = new std::string(numStr.str());
+				*/
 			}
 		}
 		catch ( std::out_of_range &e )
@@ -126,17 +151,46 @@ class Operand : public IOperand
 
 	virtual IOperand const *operator+(IOperand const &rhs) const
 		{
-			static_cast<void>(rhs);
+			eOperandType            type = MAX(this->getType(), rhs.getType());
+			// std::string                     newStr = "42";
+			// std::cout << "type = " << type << std::endl;
+			// std::cout << "+ operator called on " << this->toString() << " and " << rhs.toString() << std::endl;
+			if (type <= Int32)
+			{
+				return (g_factory.createOperand(type, std::string(std::to_string(std::stoll(this->toString()) + std::stoll(rhs.toString())))));
+			}
+			else
+			{
+				return (g_factory.createOperand(type, std::string(std::to_string(std::stold(this->toString()) + std::stold(rhs.toString())))));
+				// long double			n;
+//
+				// try {
+				// n = std::stold(this->toString()) + std::stold(rhs.toString());
+				// }
+				// catch ( std::exception &e ) {
+				// throw OverflowException();
+				// }
+				// if (this->isOverflowing(n, this->_type))
+				// throw OverflowException();
+				// this->_value = static_cast<T>(n);
+				// this->_string = new std::string(std::to_string(this->_value));
+			}
+			// IOperand const  *o = g_factory.createOperand(type, newStr);
+			// std::cout << o->toString() << std::endl;
+			// return (o);
+			// const IOperand               *newOp = Factory::createOperand(type, newStr, 1);
+			// std::cout << newOp->toString() << std::endl;
+			// TODO: create new Operand<type>(string, type)
 			// eOperandType		type = MAX(this->getType(), rhs.getType());
 			// std::string			newStr;
 			// if (type <= Int32)
 			// {
-			// 	// long long		a = std::stoll(this->toString());
-			// 	// long long		b = std::stoll(rhs.toString());
+			//	// long long		a = std::stoll(this->toString());
+			//	// long long		b = std::stoll(rhs.toString());
 			// }
 			// else
 			// {
-			// 	std::cout << "Float addition.  TODO: DEAL WITH THIS" << std::endl;
+			//	std::cout << "Float addition.  TODO: DEAL WITH THIS" << std::endl;
 			// }
 			// IOperand const	*o = g_factory.createOperand(type, newStr);
 			// std::cout << o->toString() << std::endl;	// TODO: fix leaks brah
@@ -149,29 +203,84 @@ class Operand : public IOperand
 
 	virtual IOperand const *operator-(IOperand const &rhs) const
 		{
-			static_cast<void>(rhs);
-			std::cout << "- operator called" << std::endl;
+			std::cout << "- operator called" << std::endl;	// TODO: delet this
+			eOperandType            type = MAX(this->getType(), rhs.getType());
+			if (type <= Int32)
+			{
+				return (g_factory.createOperand(type, std::string(std::to_string(std::stoll(this->toString()) - std::stoll(rhs.toString())))));
+			}
+			else
+			{
+				return (g_factory.createOperand(type, std::string(std::to_string(std::stold(this->toString()) - std::stold(rhs.toString())))));
+			}
 			return (NULL);
 		}
 
 	virtual IOperand const *operator*(IOperand const &rhs) const
 		{
 			static_cast<void>(rhs);
-			std::cout << "* operator called" << std::endl;
+			std::cout << "* operator called" << std::endl;	// TODO: delet this
+			eOperandType            type = MAX(this->getType(), rhs.getType());
+			if (type <= Int32)
+			{
+				return (g_factory.createOperand(type, std::string(std::to_string(std::stoll(this->toString()) * std::stoll(rhs.toString())))));
+			}
+			else
+			{
+				return (g_factory.createOperand(type, std::string(std::to_string(std::stold(this->toString()) * std::stold(rhs.toString())))));
+			}
 			return (NULL);
 		}
 
-	virtual IOperand const *operator/(IOperand const &rhs) const
+	virtual IOperand const *operator/(IOperand const &rhs) const	// TODO: check div by 0
 		{
 			static_cast<void>(rhs);
-			std::cout << "/ operator called" << std::endl;
+			std::cout << "/ operator called" << std::endl;	// TODO: delet this
+			eOperandType            type = MAX(this->getType(), rhs.getType());
+			if (type <= Int32)
+			{
+				long long a = std::stoll(this->toString());
+				long long b = std::stoll(rhs.toString());
+				if (b == 0)
+					throw DivisionByZeroException();
+				std::cout << "A = " << a << std::endl << "B = " << b << std::endl;
+				return (g_factory.createOperand(type, std::string(std::to_string(a / b))));
+			}
+			else
+			{
+				long double a = std::stold(this->toString());
+				long double b = std::stold(rhs.toString());
+				if (b == 0.0)
+					throw DivisionByZeroException();
+				std::cout << "A = " << a << std::endl << "B = " << b << std::endl;
+				return (g_factory.createOperand(type, std::string(std::to_string(a / b))));
+			}
 			return (NULL);
 		}
 
-	virtual IOperand const *operator%(IOperand const &rhs) const
+	virtual IOperand const *operator%(IOperand const &rhs) const	// TODO: check mod by 0
 		{
 			static_cast<void>(rhs);
-			std::cout << "% operator called" << std::endl;
+			std::cout << "% operator called" << std::endl;	// TODO: remove
+			eOperandType            type = MAX(this->getType(), rhs.getType());
+			if (type <= Int32)	// %
+			{
+				long long a = std::stoll(this->toString());
+				long long b = std::stoll(rhs.toString());
+				if (b == 0)
+					throw DivisionByZeroException();
+				std::cout << "A = " << a << std::endl << "B = " << b << std::endl;
+				return (g_factory.createOperand(type, std::string(std::to_string(a % b))));
+			}
+			else	// fmod
+			{
+				long double a = std::stold(this->toString());
+				long double b = std::stold(rhs.toString());
+				if (b == 0.0)
+					throw DivisionByZeroException();
+				std::cout << "A = " << a << std::endl << "B = " << b << std::endl;
+				return (g_factory.createOperand(type, std::string(std::to_string(fmod(a, b)))));
+			}
 			return (NULL);
 		}
 
