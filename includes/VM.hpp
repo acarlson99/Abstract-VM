@@ -106,12 +106,50 @@ public:
 		size_t		_line;
 	};
 
+	class OverflowException : public std::exception {
+	public:
+		OverflowException( void );
+		OverflowException( OverflowException const& );
+		~OverflowException( void ) throw();
+		OverflowException& operator=( OverflowException const& );
+		virtual const char*	what() const throw();
+	};
+
+	class UnderflowException : public std::exception {
+	public:
+		UnderflowException( void );
+		UnderflowException( UnderflowException const& );
+		~UnderflowException( void ) throw();
+		UnderflowException& operator=( UnderflowException const& );
+		virtual const char*	what() const throw();
+	};
+
+	class DivisionByZeroException : public std::exception {
+	public:
+		DivisionByZeroException( void );
+		DivisionByZeroException( DivisionByZeroException const& );
+		~DivisionByZeroException( void ) throw();
+		DivisionByZeroException& operator=( DivisionByZeroException const& );
+		virtual const char*	what() const throw();
+	};
+
+	class TooBigOWOException : public std::exception {
+	public:
+		TooBigOWOException( void );
+		TooBigOWOException( TooBigOWOException const& );
+		~TooBigOWOException( void ) throw();
+		TooBigOWOException& operator=( TooBigOWOException const& );
+		virtual const char*	what() const throw();
+	};
+
+
 	void	printCommands( void );	// TODO: remove
 
 private:
 	void				readLoop( void );
 	void				evaluateLoop( void );
 	IOperand const		*popUtil( void );
+	void				checkExceptions( void );
 
 	void				VMpush( Lexer const* );
 	void				VMpop( Lexer const* );

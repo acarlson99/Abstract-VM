@@ -167,15 +167,30 @@ void		VM::readLoop( void )
 		throw NoExitException();
 }
 
+void		VM::checkExceptions( void )	// TODO: modify this
+{
+	if(fetestexcept(FE_DIVBYZERO))	//     printf(" FE_DIVBYZERO");
+		throw DivisionByZeroException();
+	// if(fetestexcept(FE_INEXACT))       printf(" FE_INEXACT");
+	// if(fetestexcept(FE_INVALID))       printf(" FE_INVALID");
+	if(fetestexcept(FE_OVERFLOW))	//      printf(" FE_OVERFLOW");
+		throw OverflowException();
+	if(fetestexcept(FE_UNDERFLOW))	//     printf(" FE_UNDERFLOW");
+		throw UnderflowException();
+	feclearexcept(FE_ALL_EXCEPT);
+}
+
 void		VM::evaluateLoop( void )
 {
 	std::cout << "EVAL" << std::endl;	// TODO: delet this
+	feraiseexcept(FE_ALL_EXCEPT);	// TODO: fuck with this
 	for (auto it : this->_commands)
 	{
 		// std::cout << *it << std::endl;	// TODO: delet this
 		try {
-			// feenableexcept(FE_ALL_EXCEPT);	// TODO: fuck with this
+			feclearexcept(FE_ALL_EXCEPT);
 			(this->*_funcs.at(it->getCommand()))(it);
+			checkExceptions();
 			// for (auto it : this->_nums)
 				// 	std::cout << "STACK " << it->toString() << std::endl;
 		}
@@ -443,4 +458,36 @@ VM::InvalidCommandException::~InvalidCommandException( void ) throw() { }
 VM::InvalidCommandException& VM::InvalidCommandException::operator=( InvalidCommandException const& ) { return *this; }
 const char* VM::InvalidCommandException::what( void ) const throw() {
 	return "InvalidCommand";
+}
+
+VM::OverflowException::OverflowException( void ) { }
+VM::OverflowException::OverflowException( OverflowException const &cp ) { *this = cp; }
+VM::OverflowException::~OverflowException( void ) throw() { }
+VM::OverflowException& VM::OverflowException::operator=( OverflowException const& ) { return *this; }
+const char	*VM::OverflowException::what( void ) const throw() {
+	return "OverflowException";
+}
+
+VM::UnderflowException::UnderflowException( void ) { }
+VM::UnderflowException::UnderflowException( UnderflowException const &cp ) { *this = cp; }
+VM::UnderflowException::~UnderflowException( void ) throw() { }
+VM::UnderflowException& VM::UnderflowException::operator=( UnderflowException const& ) { return *this; }
+const char	*VM::UnderflowException::what( void ) const throw() {
+	return "UnderflowException";
+}
+
+VM::DivisionByZeroException::DivisionByZeroException( void ) { }
+VM::DivisionByZeroException::DivisionByZeroException( DivisionByZeroException const &cp ) { *this = cp; }
+VM::DivisionByZeroException::~DivisionByZeroException( void ) throw() { }
+VM::DivisionByZeroException& VM::DivisionByZeroException::operator=( DivisionByZeroException const& ) { return *this; }
+const char	*VM::DivisionByZeroException::what( void ) const throw() {
+	return "DivisionByZeroException";
+}
+
+VM::TooBigOWOException::TooBigOWOException( void ) { }
+VM::TooBigOWOException::TooBigOWOException( TooBigOWOException const &cp ) { *this = cp; }
+VM::TooBigOWOException::~TooBigOWOException( void ) throw() { }
+VM::TooBigOWOException& VM::TooBigOWOException::operator=( TooBigOWOException const& ) { return *this; }
+const char	*VM::TooBigOWOException::what( void ) const throw() {
+	return "OwO it's too bit on";
 }

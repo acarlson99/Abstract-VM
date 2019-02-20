@@ -6,7 +6,7 @@
 # include <iomanip>
 # include <float.h>
 # include <limits.h>
-// #include <fenv.h>
+#include <fenv.h>
 # include "IOperand.hpp"
 # include "Factory.hpp"
 
@@ -24,82 +24,83 @@ template <typename T>
 class Operand : public IOperand
 {
 
-  public:
+public:
 	Operand(std::string const &string, int precision, eOperandType type)
 		: _type(type), _precision(precision), _string(NULL)
-	{
-		static const size_t size_arr[] = {
-			4,
-			6,
-			11,
-		};
-		// std::stringstream	numStr(std::stringstream::out); // TODO: use stringstream to format with precision
-		// std::string			tmpStr;
-
-		try
 		{
-			if (this->_type <= Int32)
-			{
-				long long n;
-				n = std::stoll(string);
-				if (this->isOverflowing<long long>(n, this->_type) || string.length() > size_arr[this->_type])
-					throw OverflowException();
-				this->_value = static_cast<T>(n);
-				this->_string = new std::string(std::to_string(this->_value));
+			static const size_t size_arr[] = {
+				4,
+				6,
+				11,
+			};
+			// std::stringstream	numStr(std::stringstream::out); // TODO: use stringstream to format with precision
+			// std::string			tmpStr;
 
-				/*
-				long long n = std::stoll(string);
-				if (this->isOverflowing<long long>(n, this->_type) || string.length() > size_arr[this->_type])
-					throw OverflowException();
-				this->_value = static_cast<T>(n);
-				numStr << std::setprecision(this->_precision) << static_cast<long long>(this->_value);
-				this->_string = new std::string(numStr.str());
-				*/
-			}
-			else
+			try
 			{
-				long double			n;
-
-				n = std::stold(string);
-				if (this->isOverflowing<long double>(n, this->_type))
+				if (this->_type <= Int32)
 				{
-					std::cout << "OVERFLOW OH FUCK" << std::endl;
-					std::cout << n << " is overflowing" << std::endl;
-					std::cout << FLT_MIN << " > " << n << std::endl;
-					throw OverflowException();
-				}
-				this->_value = static_cast<T>(n);
-				this->_string = new std::string(std::to_string(this->_value));
+					long long n;
+					n = std::stoll(string);
+					// if (this->isOverflowing<long long>(n, this->_type) || string.length() > size_arr[this->_type])
+					if (this->isOverflowing(n, this->_type) || string.length() > size_arr[this->_type])
+						throw OverflowException();
+					this->_value = static_cast<T>(n);
+					this->_string = new std::string(std::to_string(this->_value));
 
-				/*
-				this->_value = static_cast<T>(std::stod(string));
-				std::cout << "VALUE " << this->_value << std::endl;
-				std::cout << this->_value << std::endl;
-				std::cout << "PRECISION " << this->_precision << std::endl;
-				std::cout << std::setprecision(this->_precision) << this->_value << std::endl;
-				// numStr << std::setprecision(this->_precision) << this->_value;
-				numStr << this->_value;
-				std::cout << "NUMSTR " << numStr.str() << std::endl;
-				ldn = std::stold(string.c_str());
-				if (this->isOverflowing<long double>(ldn, this->_type))
-					throw OverflowException();
-				this->_string = new std::string(numStr.str());
-				*/
+					/*
+					  long long n = std::stoll(string);
+					  if (this->isOverflowing<long long>(n, this->_type) || string.length() > size_arr[this->_type])
+					  throw OverflowException();
+					  this->_value = static_cast<T>(n);
+					  numStr << std::setprecision(this->_precision) << static_cast<long long>(this->_value);
+					  this->_string = new std::string(numStr.str());
+					*/
+				}
+				else
+				{
+					long double			n;
+
+					n = std::stold(string);
+					// if (this->isOverflowing<long double>(n, this->_type))
+					// {
+					// std::cout << "OVERFLOW OH FUCK" << std::endl;
+					// std::cout << n << " is overflowing" << std::endl;
+					// std::cout << FLT_MIN << " > " << n << std::endl;
+					// throw OverflowException();
+					// }
+					this->_value = static_cast<T>(n);
+					this->_string = new std::string(std::to_string(this->_value));
+
+					/*
+					  this->_value = static_cast<T>(std::stod(string));
+					  std::cout << "VALUE " << this->_value << std::endl;
+					  std::cout << this->_value << std::endl;
+					  std::cout << "PRECISION " << this->_precision << std::endl;
+					  std::cout << std::setprecision(this->_precision) << this->_value << std::endl;
+					  // numStr << std::setprecision(this->_precision) << this->_value;
+					  numStr << this->_value;
+					  std::cout << "NUMSTR " << numStr.str() << std::endl;
+					  ldn = std::stold(string.c_str());
+					  if (this->isOverflowing<long double>(ldn, this->_type))
+					  throw OverflowException();
+					  this->_string = new std::string(numStr.str());
+					*/
+				}
+			}
+			catch ( std::out_of_range &e )
+			{
+				if (this->_string)
+					delete this->_string;
+				throw TooBigOWOException();
+			}
+			catch ( std::exception &e )
+			{
+				if (this->_string)
+					delete this->_string;
+				throw OverflowException();
 			}
 		}
-		catch ( std::out_of_range &e )
-		{
-			if (this->_string)
-				delete this->_string;
-			throw TooBigOWOException();
-		}
-		catch ( std::exception &e )
-		{
-			if (this->_string)
-				delete this->_string;
-			throw OverflowException();
-		}
-	}
 
 	Operand(void) : _value(0), _type(Int8), _string(new std::string(std::to_string(this->_value))) { }
 
@@ -120,8 +121,9 @@ class Operand : public IOperand
 			return *this;
 		}
 
-	template <typename U>
-	bool						isOverflowing(U r, eOperandType type) const
+	// template <typename U>
+	// bool						isOverflowing(U r, eOperandType type) const
+	bool						isOverflowing(long long r, eOperandType type) const
 		{
 			switch (type)
 			{
@@ -131,10 +133,8 @@ class Operand : public IOperand
 				return (r > SHRT_MAX || r < SHRT_MIN);
 			case (Int32):
 				return (r > INT_MAX || r < INT_MIN);
-			case (Float):
-				return (r > FLT_MAX || r < FLT_MIN);
-			case (Double):
-				return (r > DBL_MAX || r < DBL_MIN);
+			case (Float):;
+			case (Double):;
 			}
 			return (true);
 		}
