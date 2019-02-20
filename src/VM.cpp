@@ -261,7 +261,6 @@ void		VM::VMadd( Lexer const *l )
 
 void		VM::VMsub( Lexer const *l )
 {
-	std::cout << "sub called" << std::endl;
 	IOperand const		*a = NULL;
 	IOperand const		*b = NULL;
 
@@ -288,7 +287,6 @@ void		VM::VMsub( Lexer const *l )
 
 void		VM::VMmul( Lexer const *l )
 {
-	std::cout << "mul called" << std::endl;
 	IOperand const		*a = NULL;
 	IOperand const		*b = NULL;
 
@@ -315,7 +313,6 @@ void		VM::VMmul( Lexer const *l )
 
 void		VM::VMdiv( Lexer const *l )
 {
-	std::cout << "div called" << std::endl;
 	IOperand const		*a = NULL;
 	IOperand const		*b = NULL;
 
@@ -342,7 +339,6 @@ void		VM::VMdiv( Lexer const *l )
 
 void		VM::VMmod( Lexer const *l )
 {
-	std::cout << "mod called" << std::endl;
 	IOperand const		*a = NULL;
 	IOperand const		*b = NULL;
 

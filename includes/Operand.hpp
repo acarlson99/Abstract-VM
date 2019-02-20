@@ -157,7 +157,6 @@ public:
 				long long b = std::stoll(rhs.toString());
 				if (b == 0)
 					throw DivisionByZeroException();
-				std::cout << "A = " << a << std::endl << "B = " << b << std::endl;
 				return (g_factory.createOperand(type, std::string(std::to_string(a / b))));
 			}
 			else
@@ -166,10 +165,8 @@ public:
 				long double b = std::stold(rhs.toString());
 				if (b == 0.0)
 					throw DivisionByZeroException();
-				std::cout << "A = " << a << std::endl << "B = " << b << std::endl;
 				return (g_factory.createOperand(type, std::string(std::to_string(a / b))));
 			}
-			return (NULL);
 		}
 
 	virtual IOperand const *operator%(IOperand const &rhs) const
@@ -182,7 +179,6 @@ public:
 				long long b = std::stoll(rhs.toString());
 				if (b == 0)
 					throw DivisionByZeroException();
-				std::cout << "A = " << a << std::endl << "B = " << b << std::endl;
 				return (g_factory.createOperand(type, std::string(std::to_string(a % b))));
 			}
 			else	// fmod
@@ -191,10 +187,8 @@ public:
 				long double b = std::stold(rhs.toString());
 				if (b == 0.0)
 					throw DivisionByZeroException();
-				std::cout << "A = " << a << std::endl << "B = " << b << std::endl;
 				return (g_factory.createOperand(type, std::string(std::to_string(fmod(a, b)))));
 			}
-			return (NULL);
 		}
 
 	virtual std::string const		&toString(void) const
