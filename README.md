@@ -64,3 +64,4 @@ SEP := '\n'+
 | print   | asserts that top element is int8 and prints value to standard out        | ```print```               |
 | exit    | terminates execution.  Every program must have an 'exit' command         | ```exit```                |
 | ;;      | EOF for stdin.  Every program reading from stdin must end with this      | ```;;```                  |
+| ;       | comment.  All input after ; is ignored unless it signals EOF             | ```add ; comment```       |

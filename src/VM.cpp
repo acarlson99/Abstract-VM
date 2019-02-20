@@ -220,8 +220,8 @@ void		VM::VMpop( Lexer const* )
 
 void		VM::VMdump( Lexer const* )
 {
-	for (auto it : this->_nums)
-		std::cout << it->toString() << std::endl;
+	for (auto it = this->_nums.rbegin(); it != this->_nums.rend(); it++)
+		std::cout << (*it)->toString() << std::endl;
 }
 
 void		VM::VMassert( Lexer const *l )
