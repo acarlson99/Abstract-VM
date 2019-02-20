@@ -142,9 +142,6 @@ public:
 		virtual const char*	what() const throw();
 	};
 
-
-	void	printCommands( void );	// TODO: remove
-
 private:
 	void				readLoop( void );
 	void				evaluateLoop( void );

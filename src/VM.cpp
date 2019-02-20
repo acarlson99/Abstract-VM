@@ -88,12 +88,6 @@ VM &VM::operator=(VM const &rhs)
 	return *this;
 }
 
-void		VM::printCommands( void )	// TODO: remove
-{
-	for (auto it : this->_commands)
-		std::cout << *it << std::endl;
-}
-
 void		VM::run( void )
 {
 	try {
@@ -136,7 +130,6 @@ void		VM::readLoop( void )
 	{
 		pushed = 0;
 		l = Lexer::generateTokens(str, line);
-		// std::cout << *l << std::endl;	// TODO: delet this
 		try {
 			if (l->getCommand() == Error)
 			{
@@ -182,17 +175,13 @@ void		VM::checkExceptions( void )	// TODO: modify this
 
 void		VM::evaluateLoop( void )
 {
-	std::cout << "EVAL" << std::endl;	// TODO: delet this
-	feraiseexcept(FE_ALL_EXCEPT);	// TODO: fuck with this
+	feraiseexcept(FE_ALL_EXCEPT);
 	for (auto it : this->_commands)
 	{
-		// std::cout << *it << std::endl;	// TODO: delet this
 		try {
 			feclearexcept(FE_ALL_EXCEPT);
 			(this->*_funcs.at(it->getCommand()))(it);
 			checkExceptions();
-			// for (auto it : this->_nums)
-				// 	std::cout << "STACK " << it->toString() << std::endl;
 		}
 		catch ( std::exception &e ) {
 			std::cout << e.what() << " line " << it->getLine() << std::endl;
@@ -216,23 +205,15 @@ IOperand const		*VM::popUtil( void )
 
 void		VM::VMpush( Lexer const *l )
 {
-	// std::cout << "PUSHING " << l->getArg() << std::endl;
 	this->_nums.push_back(g_factory.createOperand(l->getType(), l->getArg()));
-	// std::cout << "PUSHED " << this->_nums.back()->toString() << std::endl;
 }
 
 void		VM::VMpop( Lexer const* )
 {
-//	try {
-		delete this->popUtil();
-//	}
-//	catch ( std::exception &e ) {
-		//	std::cout << e.what() << " line " << l->getLine() << std::endl;
-		//	std::exit(1);
-//	}
+	delete this->popUtil();
 }
 
-void		VM::VMdump( Lexer const* )	// TODO: use std::setprecision and stuff
+void		VM::VMdump( Lexer const* )
 {
 	for (auto it : this->_nums)
 		std::cout << it->toString() << std::endl;
@@ -254,7 +235,7 @@ void		VM::VMassert( Lexer const *l )
 	throw UntrueAssertionException();
 }
 
-void		VM::VMadd( Lexer const *l )	// TODO: finish
+void		VM::VMadd( Lexer const *l )
 {
 	IOperand const		*a = NULL;
 	IOperand const		*b = NULL;
@@ -264,9 +245,6 @@ void		VM::VMadd( Lexer const *l )	// TODO: finish
 		b = this->popUtil();
 
 		IOperand const	*r = *a + *b;
-		// std::cout << r->getType() << " " << r->getPrecision() << " " << r->toString() << std::endl;
-		// delete r;
-		// std::cout << "Pushing " << r->toString() << " to stack: line " << __LINE__ << std::endl;
 		this->_nums.push_back(r);
 		delete a;
 		a = NULL;
@@ -337,7 +315,7 @@ void		VM::VMmul( Lexer const *l )
 	}
 }
 
-void		VM::VMdiv( Lexer const *l )	// TODO: check div by 0
+void		VM::VMdiv( Lexer const *l )
 {
 	std::cout << "div called" << std::endl;
 	IOperand const		*a = NULL;
@@ -364,9 +342,8 @@ void		VM::VMdiv( Lexer const *l )	// TODO: check div by 0
 	}
 }
 
-void		VM::VMmod( Lexer const *l )	// TODO: check mod by 0
+void		VM::VMmod( Lexer const *l )
 {
-	// try a % b and print exception with l->line
 	std::cout << "mod called" << std::endl;
 	IOperand const		*a = NULL;
 	IOperand const		*b = NULL;
