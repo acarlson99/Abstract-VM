@@ -66,3 +66,4 @@ j:
 k: fclean
 	rm -f $(DNAME)
 	rm -rf *.dSYM
+	rm -f TAGS
