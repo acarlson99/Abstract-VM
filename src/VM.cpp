@@ -112,6 +112,7 @@ void		VM::readLoop( void )
 	bool			pushed;
 	size_t			line = 1;
 	bool			exited = false;
+	unsigned		numErrs = 0;
 
 	if (this->_readFromFile)
 	{
@@ -124,7 +125,7 @@ void		VM::readLoop( void )
 			throw InvalidFileException();
 		}
 	}
-	while ((this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
+	while (numErrs < 20 && (this->_readFromFile || this->_continueReading) && std::getline(FILEIN, str))
 	{
 		pushed = 0;
 		l = Lexer::generateTokens(str, line);
@@ -146,19 +147,25 @@ void		VM::readLoop( void )
 		}
 		catch ( std::exception &e ) {
 			this->_eval = false;
+			++numErrs;
 			std::cout << e.what() << " line " << line << std::endl;
 		}
 		if (!pushed)
 			delete l;
 		++line;
 	}
-	if (this->_continueReading)
+	if (numErrs)
+	{
+		std::cout << "\033[1;31mFATAL: " << numErrs << " errors detected\033[0m" << std::endl;
+		std::exit(1);
+	}
+	else if (this->_continueReading)
 		throw UnexpectedEOFException();
 	else if (!exited)
 		throw NoExitException();
 }
 
-void		VM::checkExceptions( void )	// TODO: modify this
+void		VM::checkExceptions( void )
 {
 	if(fetestexcept(FE_DIVBYZERO))	//     printf(" FE_DIVBYZERO");
 		throw DivisionByZeroException();
