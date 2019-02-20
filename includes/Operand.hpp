@@ -229,7 +229,7 @@ public:
 		TooBigOWOException( TooBigOWOException const & cp) { *this = cp; }
 		~TooBigOWOException( void ) throw() { }
 		TooBigOWOException& operator=( TooBigOWOException const & ) { return *this; }
-		virtual const char* what() const throw() { return ("OwO it's too big on"); }
+		virtual const char* what() const throw() { return ("OwO it's too big, senpai"); }
 	};
 
 private:

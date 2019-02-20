@@ -148,7 +148,7 @@ void		VM::readLoop( void )
 		catch ( std::exception &e ) {
 			this->_eval = false;
 			++numErrs;
-			std::cout << e.what() << " line " << line << std::endl;
+			std::cout << e.what() << ": line " << line << std::endl;
 		}
 		if (!pushed)
 			delete l;
@@ -189,7 +189,7 @@ void		VM::evaluateLoop( void )
 			checkExceptions();
 		}
 		catch ( std::exception &e ) {
-			std::cout << e.what() << " line " << it->getLine() << std::endl;
+			std::cout << e.what() << ": line " << it->getLine() << std::endl;
 			std::exit(1);
 		}
 		delete it;
@@ -261,7 +261,7 @@ void		VM::VMadd( Lexer const *l )
 			delete a;
 		if (b)
 			delete b;
-		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::cout << e.what() << ": line " << l->getLine() << std::endl;
 		std::exit(1);
 	}
 }
@@ -287,7 +287,7 @@ void		VM::VMsub( Lexer const *l )
 			delete a;
 		if (b)
 			delete b;
-		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::cout << e.what() << ": line " << l->getLine() << std::endl;
 		std::exit(1);
 	}
 }
@@ -313,7 +313,7 @@ void		VM::VMmul( Lexer const *l )
 			delete a;
 		if (b)
 			delete b;
-		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::cout << e.what() << ": line " << l->getLine() << std::endl;
 		std::exit(1);
 	}
 }
@@ -339,7 +339,7 @@ void		VM::VMdiv( Lexer const *l )
 			delete a;
 		if (b)
 			delete b;
-		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::cout << e.what() << ": line " << l->getLine() << std::endl;
 		std::exit(1);
 	}
 }
@@ -365,7 +365,7 @@ void		VM::VMmod( Lexer const *l )
 			delete a;
 		if (b)
 			delete b;
-		std::cout << e.what() << " line " << l->getLine() << std::endl;
+		std::cout << e.what() << ": line " << l->getLine() << std::endl;
 		std::exit(1);
 	}
 }
@@ -387,7 +387,7 @@ void		VM::VMexit( Lexer const* )
 
 void		VM::VMcatch( Lexer const *l)
 {
-	std::cout << "VM::VMcatch called on " << *l << " line " << l->getLine() << " somehow" << std::endl;
+	std::cout << "VM::VMcatch called on " << *l << ": line " << l->getLine() << " somehow" << std::endl;
 }
 
 VM::InvalidFileException::InvalidFileException( void ) { }
@@ -467,5 +467,5 @@ VM::TooBigOWOException::TooBigOWOException( TooBigOWOException const &cp ) { *th
 VM::TooBigOWOException::~TooBigOWOException( void ) throw() { }
 VM::TooBigOWOException& VM::TooBigOWOException::operator=( TooBigOWOException const& ) { return *this; }
 const char	*VM::TooBigOWOException::what( void ) const throw() {
-	return "OwO it's too bit on";
+	return "OwO it's too bit, senpai";
 }
