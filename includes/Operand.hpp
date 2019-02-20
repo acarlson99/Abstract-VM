@@ -6,15 +6,13 @@
 # include <iomanip>
 # include <float.h>
 # include <limits.h>
-#include <fenv.h>
+# include <fenv.h>
 # include "IOperand.hpp"
 # include "Factory.hpp"
 
 # ifndef MAX
 #  define MAX(a, b) (a > b ? a : b)
 # endif
-
-class Factory;
 
 template <typename T>
 class Operand : public IOperand
@@ -79,6 +77,7 @@ public:
 			this->_type = rhs._type;
 			delete this->_string;
 			this->_string = new std::string(rhs._string->c_str());
+			this->_precision = rhs._precision;
 			return *this;
 		}
 

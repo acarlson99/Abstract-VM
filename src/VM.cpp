@@ -58,12 +58,10 @@ VM::VM( VM const &cp ) { *this = cp; }
 
 VM::~VM( void )
 {
-	std::cout << "Destructor called" << std::endl;
 	for (auto it : this->_nums)
-	{
-		std::cout << "DELETING " << it << std::endl;
 		delete it;
-	}
+	for (auto it : this->_commands)
+		delete it;
 }
 
 VM &VM::operator=(VM const &rhs)
